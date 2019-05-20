@@ -23,8 +23,10 @@ public class Tetris extends JFrame implements ActionListener{
 	private GameServer server;
 	private GameClient client;
 	private TetrisBoard board = new TetrisBoard(this,client);
-	private JMenuItem itemServerStart = new JMenuItem("ì„œë²„ë¡œ ì ‘ì†í•˜ê¸°");
-	private JMenuItem itemClientStart = new JMenuItem("í´ë¼ì´ì–¸íŠ¸ë¡œ ì ‘ì†í•˜ê¸°");
+	private JMenuItem itemServerStart = new JMenuItem("¼­¹ö·Î Á¢¼ÓÇÏ±â");
+	private JMenuItem itemClientStart = new JMenuItem("Å¬¶óÀÌ¾ğÆ®·Î Á¢¼ÓÇÏ±â");
+	
+	private JMenuItem itemKeySet = new JMenuItem("¼³Á¤ÇÏ±â");	//"Å° Á¶ÀÛ" ÇÏÀ§ menuÀÎ "¼³Á¤ÇÏ±â" »ğÀÔ.(millions)
 	
 	private boolean isNetwork;
 	private boolean isServer;
@@ -33,11 +35,16 @@ public class Tetris extends JFrame implements ActionListener{
 
 	public Tetris() {
 		JMenuBar mnBar = new JMenuBar();
-		JMenu mnGame = new JMenu("ê²Œì„í•˜ê¸°");
+		JMenu mnGame = new JMenu("°ÔÀÓÇÏ±â");
+		JMenu stGame = new JMenu("Å° Á¶ÀÛ");	 //»ó´Ü¿¡ "Å° Á¶ÀÛ" menu »ğÀÔ. (millions)
 		
 		mnGame.add(itemServerStart);
 		mnGame.add(itemClientStart);
+		
+		stGame.add(itemKeySet);				//millions
+		
 		mnBar.add(mnGame);
+		mnBar.add(stGame);					//millions
 		
 		this.setJMenuBar(mnBar);
 		
@@ -52,6 +59,9 @@ public class Tetris extends JFrame implements ActionListener{
 		
 		itemServerStart.addActionListener(this);
 		itemClientStart.addActionListener(this);
+		
+		itemKeySet.addActionListener(this);				//millions
+		
 		this.addWindowListener(new WindowAdapter() {
 
 			@Override
@@ -79,9 +89,9 @@ public class Tetris extends JFrame implements ActionListener{
 		String nickName=null;
 		if(e.getSource() == itemServerStart){
 			
-			String sp = JOptionPane.showInputDialog("portë²ˆí˜¸ë¥¼ ì…ë ¥í•´ì£¼ì„¸ìš”","9500");
+			String sp = JOptionPane.showInputDialog("port¹øÈ£¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä","9500");
 			if(sp!=null && !sp.equals(""))port = Integer.parseInt(sp);
-			nickName = JOptionPane.showInputDialog("ë‹‰ë„¤ì„ì„ ì…ë ¥í•´ì£¼ì„¸ìš”","ì´ë¦„ì—†ìŒ");
+			nickName = JOptionPane.showInputDialog("´Ğ³×ÀÓÀ» ÀÔ·ÂÇØÁÖ¼¼¿ä","ÀÌ¸§¾øÀ½");
 			
 			if(port!=0){
 				if(server == null) server = new GameServer(port);
@@ -108,13 +118,13 @@ public class Tetris extends JFrame implements ActionListener{
 				e1.printStackTrace();
 			}
 			
-			ip = JOptionPane.showInputDialog("IPë¥¼ ì…ë ¥í•´ì£¼ì„¸ìš”.",ip);
-			String sp = JOptionPane.showInputDialog("portë²ˆí˜¸ë¥¼ ì…ë ¥í•´ì£¼ì„¸ìš”","9500");
+			ip = JOptionPane.showInputDialog("IP¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä.",ip);
+			String sp = JOptionPane.showInputDialog("port¹øÈ£¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä","9500");
 			if(sp!=null && !sp.equals(""))port = Integer.parseInt(sp);
-			nickName = JOptionPane.showInputDialog("ë‹‰ë„¤ì„ì„ ì…ë ¥í•´ì£¼ì„¸ìš”","ì´ë¦„ì—†ìŒ");
+			nickName = JOptionPane.showInputDialog("´Ğ³×ÀÓÀ» ÀÔ·ÂÇØÁÖ¼¼¿ä","ÀÌ¸§¾øÀ½");
 
 		
-			if(ip!=null){
+			if(ip!=null){														// "¼³Á¤ÇÏ±â"¸¦ ´©¸£¸é ½ÇÇàµÇ´Â program(millions)
 				client = new GameClient(this,ip,port,nickName);
 				if(client.start()){
 					itemServerStart.setEnabled(false);
@@ -123,7 +133,9 @@ public class Tetris extends JFrame implements ActionListener{
 					board.startNetworking(ip, port, nickName);
 					isNetwork = true;
 				}
-			}
+			}		}else if(e.getSource() == itemKeySet) {
+				  Button start = new Button();
+				  start.FrameShow();
 		}
 	}
 

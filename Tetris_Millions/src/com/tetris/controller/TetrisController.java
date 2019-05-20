@@ -82,7 +82,6 @@ public class TetrisController {
 	public void moveLeft(int x){
 		//이동
 		block.moveLeft(x);
-				
 		//체크, 범위를 벗어났다면 원상복귀
 		if(!checkIndex(maxX,maxY)) {
 			block.moveLeft(-x);

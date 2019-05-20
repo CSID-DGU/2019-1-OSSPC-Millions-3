@@ -7,7 +7,7 @@ import com.tetris.classes.TetrisBlock;
 public class LeftUp extends TetrisBlock {
 
 	public LeftUp(int x, int y) {
-		super(x, y, new Color(255,94,0), new Color(255,255,255));
+		super(x, y, new Color(255,130,36), new Color(255,255,255));
 		type = TYPE_LEFTUP;
 	}
 

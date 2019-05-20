@@ -7,7 +7,7 @@ import com.tetris.classes.TetrisBlock;
 public class LeftTwoUp extends TetrisBlock {
 
 	public LeftTwoUp(int x, int y) {
-		super(x, y, new Color(200,0,0),new Color(255,255,255));
+		super(x, y, new Color(255,131,131),new Color(255,255,255));
 		type = TYPE_LEFTTWOUP;
 	}
 
@@ -59,3 +59,4 @@ public class LeftTwoUp extends TetrisBlock {
 	}//rotation
 
 }
+

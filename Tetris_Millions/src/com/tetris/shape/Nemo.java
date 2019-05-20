@@ -7,7 +7,7 @@ import com.tetris.classes.TetrisBlock;
 public class Nemo extends TetrisBlock {
 
 	public Nemo(int x, int y) {
-		super(x, y, new Color(153,138,0), new Color(255,255,255));
+		super(x, y, new Color(255,255,72), new Color(255,255,255));
 		type = TYPE_NEMO;
 	}
 
@@ -60,3 +60,4 @@ public class Nemo extends TetrisBlock {
 		}//switch
 	}//rotation
 }
+

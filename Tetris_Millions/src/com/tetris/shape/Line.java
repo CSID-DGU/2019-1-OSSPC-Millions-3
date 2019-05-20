@@ -7,7 +7,7 @@ import com.tetris.classes.TetrisBlock;
 public class Line extends TetrisBlock {
 
 	public Line(int x, int y) {
-		super(x, y, new Color(92,209,229),new Color(255,255,255));
+		super(x, y, new Color(121,171,255),new Color(255,255,255));
 		type = TYPE_LINE;
 	}
 
@@ -54,12 +54,11 @@ public class Line extends TetrisBlock {
 			colBlock[1].setFixGridXY(1,0);
 			break;
 		case ROTATION_270 : 
-			colBlock[3].setFixGridXY(0,-2);
-			colBlock[2].setFixGridXY(0,-1);
-			colBlock[0].setFixGridXY(0,0);
-			colBlock[1].setFixGridXY(0,1);
+			colBlock[1].setFixGridXY(0,-2);
+			colBlock[0].setFixGridXY(0,-1);
+			colBlock[2].setFixGridXY(0,0);
+			colBlock[3].setFixGridXY(0,1);
 			break;
 		}//switch
 	}//rotation
-
 }

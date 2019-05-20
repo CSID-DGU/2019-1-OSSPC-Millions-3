@@ -7,7 +7,7 @@ import com.tetris.classes.TetrisBlock;
 public class RightUp extends TetrisBlock {
 
 	public RightUp(int x, int y) {
-		super(x, y, new Color(88,83,235), new Color(255,255,255));
+		super(x, y, new Color(165,102,255), new Color(255,255,255));
 		type = TYPE_RIGHTUP;
 	}
 
@@ -60,3 +60,4 @@ public class RightUp extends TetrisBlock {
 	}//rotation
 
 }
+
