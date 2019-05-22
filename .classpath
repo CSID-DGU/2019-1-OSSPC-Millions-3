@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="src" path="Tetris_Millions/JLayer1.0.1/src"/>
-	<classpathentry kind="src" path="Tetris_Millions/JLayer1.0.1/srctest"/>
-	<classpathentry kind="src" path="Tetris_Millions/src"/>
-	<classpathentry kind="lib" path="Tetris_Millions/JLayer1.0.1/jl1.0.1.jar"/>
-	<classpathentry kind="output" path="Tetris_Millions/bin"/>
-</classpath>
