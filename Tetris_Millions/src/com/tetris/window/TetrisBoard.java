@@ -629,17 +629,18 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	 * @param lineNumber 삭제라인
 	 */
 	private void removeBlockLine(int lineNumber) {
+		new Music("Clear.mp3", false).start();
 		// 1줄을 지워줌
-		for (int j = 0; j < maxX; j++) {
+		for (int j = 0; j < maxX ; j++) {
 			for (int s = 0; s < blockList.size(); s++) {
 				Block b = blockList.get(s);
 				if (b == map[lineNumber][j])
 					blockList.remove(s);
 			}
 			map[lineNumber][j] = null;
-		} // for(j)
+		}// for(j)
 
-		this.dropBoard(lineNumber, 1);
+		this.dropBoard(lineNumber,1);
 	}
 
 	/**
@@ -757,19 +758,20 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	 * 블럭을 홀드시킨다.
 	 */
 	public void playBlockHold() {
-		if (isHold)
-			return;
-
-		if (hold == null) {
-			hold = getBlockClone(shap, false);
+		if(isHold) return;
+		
+		if(hold==null){
+			new Music("Save.mp3", false).start();
+			hold = getBlockClone(shap,false);
 			this.nextTetrisBlock();
-		} else {
-			TetrisBlock tmp = getBlockClone(shap, false);
-			shap = getBlockClone(hold, false);
-			hold = getBlockClone(tmp, false);
+		}else{
+			new Music("Save.mp3", false).start();
+			TetrisBlock tmp = getBlockClone(shap,false);
+			shap = getBlockClone(hold,false);
+			hold = getBlockClone(tmp,false);
 			this.initController();
 		}
-
+		
 		isHold = true;
 	}
 
@@ -819,7 +821,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	}
 	// popup 이벤트 함수 , millions
 	public void GameEndPopUp() {  
-		GameEndSound = new Music("GameEndSound.mp3", false); 
+		GameEndSound = new Music("GameOver.mp3", false); 
 		GameEndSound.start();	
 		ImageIcon popupicon = new ImageIcon(TetrisMain.class.getResource("../../../Images/GAMEOVER.PNG"));
 		JOptionPane.showMessageDialog(null, null, "The End", JOptionPane.ERROR_MESSAGE, popupicon);
@@ -835,34 +837,42 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 
 	public void keyPressed(KeyEvent e) {
 		Button button = new Button();
-		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+		if(e.getKeyCode() == KeyEvent.VK_ENTER){
 			messageArea.requestFocus();
 		}
-		if (!isPlay)
-			return;
-		if (e.getKeyCode() == button.getLeft_key()) {
-			new Music("BlockMoveSound.mp3", false).start(); // millions
+		if(!isPlay) return;
+		if(e.getKeyCode() == KeyEvent.VK_LEFT){
 			controller.moveLeft();
 			controllerGhost.moveLeft();
-		} else if (e.getKeyCode() == button.right_key) {
-			new Music("BlockMoveSound.mp3", false).start(); // millions
+			new Music("Left.mp3", false).start();
+			
+		}else if(e.getKeyCode() == KeyEvent.VK_RIGHT){
 			controller.moveRight();
 			controllerGhost.moveRight();
-		} else if (e.getKeyCode() == button.down_key) {
-			new Music("BlockMoveSound.mp3", false).start();	// millions
+			new Music("Right.mp3", false).start();
+
+
+		}else if(e.getKeyCode() == KeyEvent.VK_DOWN){
 			controller.moveDown();
-		} else if (e.getKeyCode() == button.up_key) {
-			new Music("BlockMoveSound.mp3", false).start();	// millions
+			new Music("Down.mp3", false).start();
+		
+
+		}else if(e.getKeyCode() == KeyEvent.VK_UP){
 			controller.nextRotationLeft();
 			controllerGhost.nextRotationLeft();
-		} else if (e.getKeyCode() == button.space_key) {
+			new Music("Rotation.mp3", false).start();
+		
+		}else if(e.getKeyCode() == KeyEvent.VK_SPACE){
 			controller.moveQuickDown(shap.getPosY(), true);
-			new Music("BlockMoveSound.mp3", false).start();	// millions
 			this.fixingTetrisBlock();
-		} else if (e.getKeyCode() == Button.shift_key) {
-			new Music("ShiftSound.mp3", false).start();		// millions
+			new Music("Space.mp3", false).start();
+			
+			
+		}else if(e.getKeyCode() == KeyEvent.VK_SHIFT){ 
 			playBlockHold();
+			
 		}
+		
 		this.showGhost();
 		this.repaint();
 	}
@@ -887,14 +897,25 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btnStart) {
 			
-			GameMusic = new Music("GameMusic.mp3", true ); //GameMusic.start();
-			
-			if (client != null) {
-				client.gameStart((int) comboSpeed.getSelectedItem());
-			} else {
-				this.gameStart((int) comboSpeed.getSelectedItem());
+			if(GameMusic != null && GameMusic.isAlive()) {
+				GameMusic.close();
+				GameMusic = new Music("GameMusic.mp3", true );
+				GameMusic.start();
+				
+			}else {
+				GameMusic = new Music("GameMusic.mp3", true );
+				GameMusic.start();
 			}
-		} else if (e.getSource() == btnExit) {
+				
+			if(client!=null){
+				client.gameStart((int)comboSpeed.getSelectedItem());
+			}else{
+				this.gameStart((int)comboSpeed.getSelectedItem());
+			}
+		}else if(e.getSource() == btnExit){
+			if(GameMusic != null) {
+				GameMusic.close();
+			}
 			if (client != null) {
 				GameMusic.close();	// millions
 				if (tetris.isNetwork()) {
