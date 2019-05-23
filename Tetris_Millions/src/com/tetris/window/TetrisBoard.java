@@ -96,6 +96,11 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	
 	private int removeLineCount = 0;
 	private int removeLineCombo = 0;
+	
+	//Music 객체 millions
+	public Music GameMusic; // 게임하는 도중의 음악
+	public Music GameEndSound;// 게임 종료 시 효과음
+
 
 	public TetrisBoard(Tetris tetris, GameClient client) {
 		this.tetris = tetris;
@@ -114,14 +119,12 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		
 		btnStart.addMouseListener(new MouseAdapter(){
 			public void mousePressed(MouseEvent e) {
-				public void mousePressed(MouseEvent e) {
-					Music MousePressedSound = new Music("Start.mp3", false);
-					MousePressedSound.start();
-				}
-				public void mouseEntered(MouseEvent e) {
-					Music MousePressedSound = new Music("BlockMoveSound.mp3", false);
-					MousePressedSound.start();
-				}
+				Music MousePressedSound = new Music("Start.mp3", false);
+				MousePressedSound.start();
+			}
+			public void mouseEntered(MouseEvent e) {
+				Music MousePressedSound = new Music("BlockMoveSound.mp3", false);
+				MousePressedSound.start();
 			}
 		
 			
@@ -932,9 +935,6 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		}
 	}
 	
-	//Music 객체 millions
-	Music GameMusic; // 게임하는 도중의 음악
-	Music GameEndSound;// 게임 종료 시 효과음
 
 	public boolean isPlay() {
 		return isPlay;
