@@ -835,7 +835,6 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	}
 
 
-	// new Music ÄÚµå millions
 	public void keyReleased(KeyEvent e) {
 	}
 
@@ -848,34 +847,33 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			messageArea.requestFocus();
 		}
 		if(!isPlay) return;
-		if(e.getKeyCode() == KeyEvent.VK_LEFT){
+		if(e.getKeyCode() == button.left_key){
 			controller.moveLeft();
 			controllerGhost.moveLeft();
 			new Music("Left.mp3", false).start();
 			
-		}else if(e.getKeyCode() == KeyEvent.VK_RIGHT){
+		}else if(e.getKeyCode() == button.right_key){
 			controller.moveRight();
 			controllerGhost.moveRight();
 			new Music("Right.mp3", false).start();
 
 
-		}else if(e.getKeyCode() == KeyEvent.VK_DOWN){
+		}else if(e.getKeyCode() == button.down_key){
 			controller.moveDown();
 			new Music("Down.mp3", false).start();
 		
 
-		}else if(e.getKeyCode() == KeyEvent.VK_UP){
+		}else if(e.getKeyCode() == button.up_key){
 			controller.nextRotationLeft();
 			controllerGhost.nextRotationLeft();
 			new Music("Rotation.mp3", false).start();
 		
-		}else if(e.getKeyCode() == KeyEvent.VK_SPACE){
+		}else if(e.getKeyCode() == button.space_key){
 			controller.moveQuickDown(shap.getPosY(), true);
 			this.fixingTetrisBlock();
 			new Music("Space.mp3", false).start();
 			
-			
-		}else if(e.getKeyCode() == KeyEvent.VK_SHIFT){ 
+		}else if(e.getKeyCode() == button.shift_key){ 
 			playBlockHold();
 			
 		}
@@ -920,7 +918,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 				this.gameStart((int)comboSpeed.getSelectedItem());
 			}
 		}else if(e.getSource() == btnExit){
-			if(GameMusic != null) {
+			if(GameMusic != null && GameMusic.isAlive()) {
 				GameMusic.close();
 			}
 			if (client != null) {
