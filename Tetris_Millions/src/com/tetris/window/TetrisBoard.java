@@ -59,14 +59,14 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 
 	private SystemMessageArea systemMsg = new SystemMessageArea(BLOCK_SIZE * 1, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE * 7,BLOCK_SIZE * 5, BLOCK_SIZE * 12);
 	private MessageArea messageArea = new MessageArea(this,0, PANEL_HEIGHT - MESSAGE_HEIGHT, PANEL_WIDTH-BLOCK_SIZE*7, MESSAGE_HEIGHT);
-	private JButton btnStart = new JButton("시작하기");
-	private JButton btnExit = new JButton("나가기");
-	private JCheckBox checkGhost = new JCheckBox("고스트모드", true);
-	private JCheckBox checkGrid = new JCheckBox("격자 표시", true);
+	private JButton btnStart = new JButton("�떆�옉�븯湲�");
+	private JButton btnExit = new JButton("�굹媛�湲�");
+	private JCheckBox checkGhost = new JCheckBox("怨좎뒪�듃紐⑤뱶", true);
+	private JCheckBox checkGrid = new JCheckBox("寃⑹옄 �몴�떆", true);
 	
 	
-	private JCheckBox checkEffect = new JCheckBox("효과음", true);					// 효과음 checkbox (millions)
-	private JCheckBox checkBGM = new JCheckBox("배경음악", true);						// 배경음악 checkbox (millions)
+	private JCheckBox checkEffect = new JCheckBox("�슚怨쇱쓬", true);					// �슚怨쇱쓬 checkbox (millions)
+	private JCheckBox checkBGM = new JCheckBox("諛곌꼍�쓬�븙", true);						// 諛곌꼍�쓬�븙 checkbox (millions)
 	
 	
 	private Integer[] lv = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
@@ -91,22 +91,22 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	private boolean usingGrid = true;
 	
 	
-	private boolean usingEffect = true;							// 효과음 (millions)
-	private boolean usingBGM = true;							// 배경음악 (millions)
+	private boolean usingEffect = true;							// �슚怨쇱쓬 (millions)
+	private boolean usingBGM = true;							// 諛곌꼍�쓬�븙 (millions)
 	
 	
 	private int removeLineCount = 0;
 	private int removeLineCombo = 0;
 	
-	//Music 객체 millions
-	public Music GameMusic; // 게임하는 도중의 음악
-	public Music GameEndSound;// 게임 종료 시 효과음
+	//Music 媛앹껜 millions
+	public Music GameMusic; // 寃뚯엫�븯�뒗 �룄以묒쓽 �쓬�븙
+	public Music GameEndSound;// 寃뚯엫 醫낅즺 �떆 �슚怨쇱쓬
 
 
 	public TetrisBoard(Tetris tetris, GameClient client) {
 		this.tetris = tetris;
 		this.client = client;
-		this.setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));// 기본크기
+		this.setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));// 湲곕낯�겕湲�
 		this.addKeyListener(this);
 		this.addMouseListener(this);
 		this.setLayout(null);
@@ -130,7 +130,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		
 			
 			
-		}); // 버튼 효과음 millions
+		}); // 踰꾪듉 �슚怨쇱쓬 millions
 		
 		btnExit.setBounds(PANEL_WIDTH - BLOCK_SIZE * 7, PANEL_HEIGHT - messageArea.getHeight() / 2, BLOCK_SIZE * 7,
 				messageArea.getHeight() / 2);
@@ -150,12 +150,12 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			
 		});
 		
-		// 버튼 효과음 millions
+		// 踰꾪듉 �슚怨쇱쓬 millions
 		
-		checkGhost.setBounds(PANEL_WIDTH - BLOCK_SIZE * 12 + 35, 5, 95, 20);		//고스트모드 checkbox 왼쪽으로 이동.(millions)
+		checkGhost.setBounds(PANEL_WIDTH - BLOCK_SIZE * 12 + 35, 5, 95, 20);		//怨좎뒪�듃紐⑤뱶 checkbox �쇊履쎌쑝濡� �씠�룞.(millions)
 		checkGhost.setBackground(new Color(255, 255, 255));
 		checkGhost.setForeground(Color.GRAY);
-		checkGhost.setFont(new Font("굴림", Font.BOLD, 13));
+		checkGhost.setFont(new Font("援대┝", Font.BOLD, 13));
 		checkGhost.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
@@ -164,10 +164,10 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 				TetrisBoard.this.repaint();
 			}
 		});
-		checkGrid.setBounds(PANEL_WIDTH - BLOCK_SIZE * 12 + 35, 25, 95, 20);		//격자모드 checkbox 왼쪽으로 이동.(millions)
+		checkGrid.setBounds(PANEL_WIDTH - BLOCK_SIZE * 12 + 35, 25, 95, 20);		//寃⑹옄紐⑤뱶 checkbox �쇊履쎌쑝濡� �씠�룞.(millions)
 		checkGrid.setBackground(new Color(255, 255, 255));
 		checkGrid.setForeground(Color.GRAY);
-		checkGrid.setFont(new Font("굴림", Font.BOLD, 13));
+		checkGrid.setFont(new Font("援대┝", Font.BOLD, 13));
 		checkGrid.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
@@ -177,10 +177,10 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			}
 		});
 
-		checkEffect.setBounds(PANEL_WIDTH - BLOCK_SIZE * 7 + 35, 5, 95, 20);		//효과음 checkbox 위치 및 디자인(millions)
+		checkEffect.setBounds(PANEL_WIDTH - BLOCK_SIZE * 7 + 35, 5, 95, 20);		//�슚怨쇱쓬 checkbox �쐞移� 諛� �뵒�옄�씤(millions)
 		checkEffect.setBackground(new Color(255, 255, 255));
 		checkEffect.setForeground(Color.GRAY);
-		checkEffect.setFont(new Font("굴림", Font.BOLD, 13));
+		checkEffect.setFont(new Font("援대┝", Font.BOLD, 13));
 		checkEffect.setRequestFocusEnabled(false);
 		checkEffect.addChangeListener(new ChangeListener() {
 			
@@ -196,10 +196,10 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			}
 		});
 		
-		checkBGM.setBounds(PANEL_WIDTH - BLOCK_SIZE * 7 + 35, 25, 95, 20);			//배경음악 checkbox 위치 및 디자인(millions)
+		checkBGM.setBounds(PANEL_WIDTH - BLOCK_SIZE * 7 + 35, 25, 95, 20);			//諛곌꼍�쓬�븙 checkbox �쐞移� 諛� �뵒�옄�씤(millions)
 		checkBGM.setBackground(new Color(255, 255, 255));
 		checkBGM.setForeground(Color.GRAY);
-		checkBGM.setFont(new Font("굴림", Font.BOLD, 13));
+		checkBGM.setFont(new Font("援대┝", Font.BOLD, 13));
 		checkBGM.setRequestFocusEnabled(false);
 		checkBGM.addChangeListener(new ChangeListener() {
 			@Override
@@ -214,7 +214,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			}
 		});
 		
-		comboSpeed.setBounds(PANEL_WIDTH - BLOCK_SIZE * 13, 5, 45, 20); 			// 속도 숫자 표시 왼쪽으로 이동.(millions)
+		comboSpeed.setBounds(PANEL_WIDTH - BLOCK_SIZE * 13, 5, 45, 20); 			// �냽�룄 �닽�옄 �몴�떆 �쇊履쎌쑝濡� �씠�룞.(millions)
 		this.add(comboSpeed);
 
 		this.add(systemMsg);
@@ -224,8 +224,8 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		this.add(checkGhost);
 		this.add(checkGrid);
 		
-		this.add(checkEffect);														//효과음(millions)
-		this.add(checkBGM);															//배경음악(millions)
+		this.add(checkEffect);														//�슚怨쇱쓬(millions)
+		this.add(checkBGM);															//諛곌꼍�쓬�븙(millions)
 	}
 
 	public void startNetworking(String ip, int port, String nickName) {
@@ -236,12 +236,12 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	}
 
 	/**
-	 * TODO : 게임시작 게임을 시작한다.
+	 * TODO : 寃뚯엫�떆�옉 寃뚯엫�쓣 �떆�옉�븳�떎.
 	 */
 
 	public void gameStart(int speed) {
 		comboSpeed.setSelectedItem(new Integer(speed));
-		// 돌고 있을 스레드를 정지시킨다.
+		// �룎怨� �엳�쓣 �뒪�젅�뱶瑜� �젙吏��떆�궓�떎.
 		if (th != null) {
 			try {
 				isPlay = false;
@@ -251,12 +251,12 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			}
 		}
 
-		// 맵셋팅
+		// 留듭뀑�똿
 		map = new Block[maxY][maxX];
 		blockList = new ArrayList<Block>();
 		nextBlocks = new ArrayList<TetrisBlock>();
 
-		// 도형셋팅
+		// �룄�삎�뀑�똿
 		shap = getRandomTetrisBlock();
 		ghost = getBlockClone(shap, true);
 		hold = null;
@@ -268,7 +268,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			nextBlocks.add(getRandomTetrisBlock());
 		}
 
-		// 스레드 셋팅
+		// �뒪�젅�뱶 �뀑�똿
 		isPlay = true;
 		th = new Thread(this);
 		th.start();
@@ -286,52 +286,52 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		g.fillRect(0, BOARD_Y, 2*(2*BOARD_X+maxX*BLOCK_SIZE), maxY*BLOCK_SIZE);
 		g.setColor(Color.GRAY);
 
-		// IP 출력
+		// IP 異쒕젰
 		g.drawString("ip : " + ip + "     port : " + port, 20, 20);
 
-		// NickName 출력
-		g.drawString("닉네임 : " + nickName, 20, 40);
+		// NickName 異쒕젰
+		g.drawString("�땳�꽕�엫 : " + nickName, 20, 40);
 
-		// 속도
+		// �냽�룄
 		Font font = g.getFont();
-		g.setFont(new Font("굴림", Font.BOLD, 13));
-		g.drawString("속도", PANEL_WIDTH - BLOCK_SIZE * 15, 20);
+		g.setFont(new Font("援대┝", Font.BOLD, 13));
+		g.drawString("�냽�룄", PANEL_WIDTH - BLOCK_SIZE * 15, 20);
 		g.setFont(font);
 
 		g.setColor(Color.lightGray);
 		g.fillRect(BOARD_X, BOARD_Y, maxX*BLOCK_SIZE, maxY*BLOCK_SIZE);
-		// 왼쪽
+		// �쇊履�
 		g.fillRect(BLOCK_SIZE*minX ,BOARD_Y + BLOCK_SIZE, BLOCK_SIZE*5,BLOCK_SIZE*5);
-		// 오른쪽 위
+		// �삤瑜몄そ �쐞
 		g.fillRect(BOARD_X + maxX*BLOCK_SIZE+ BLOCK_SIZE*minX, BOARD_Y + BLOCK_SIZE, BLOCK_SIZE*5,BLOCK_SIZE*5);
-		// 오른쪽 아래
+		// �삤瑜몄そ �븘�옒
 		g.fillRect(BOARD_X + maxX*BLOCK_SIZE + BLOCK_SIZE*minX, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*7, BLOCK_SIZE*5,BLOCK_SIZE*12);
 
-		// HOLD NEXT 출력
+		// HOLD NEXT 異쒕젰
 		g.setFont(new Font(font.getFontName(), font.getStyle(), 20));
 		g.drawString("H O L D", BLOCK_SIZE*minX + 15, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*5 + 20);
 		g.drawString("N E X T", BOARD_X + maxX*BLOCK_SIZE+ BLOCK_SIZE*minX + 15, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*5 + 20);
 		g.setFont(font);
 
-		// 그리드 표시
+		// 洹몃━�뱶 �몴�떆
 		if (usingGrid) {
 			g.setColor(Color.WHITE);
 			for(int i=1;i<maxY;i++) 
 				g.drawLine(BOARD_X, BOARD_Y+BLOCK_SIZE*i, BOARD_X + maxX*BLOCK_SIZE, BOARD_Y + BLOCK_SIZE*i);
-			// 가운데 세로줄
+			// 媛��슫�뜲 �꽭濡쒖쨪
 			for(int i=1;i<maxX;i++) 
 				g.drawLine(BOARD_X + BLOCK_SIZE*i, BOARD_Y, BOARD_X + BLOCK_SIZE*i, BOARD_Y + maxY*BLOCK_SIZE);
-			// 왼쪽 가로줄
+			// �쇊履� 媛�濡쒖쨪
 			for(int i=1;i<5;i++) 
 				g.drawLine(BLOCK_SIZE*minX ,BOARD_Y + BLOCK_SIZE*(i+minX), BLOCK_SIZE*(minX+5),BOARD_Y + BLOCK_SIZE*(i+minX));
-			// 왼쪽 세로줄
+			// �쇊履� �꽭濡쒖쨪
 			for(int i=1;i<5;i++) 
 				g.drawLine(BLOCK_SIZE*(i+minX) ,BOARD_Y + BLOCK_SIZE*minX, BLOCK_SIZE*(i+minX),BOARD_Y + BLOCK_SIZE*(minX+5));
-			// 오른쪽 위 가로줄
+			// �삤瑜몄そ �쐞 媛�濡쒖쨪
 			for(int i=1;i<5;i++) 
 				g.drawLine(BOARD_X + BLOCK_SIZE*minX + maxX*BLOCK_SIZE, BOARD_Y + BLOCK_SIZE*(i+minX), 
 						BOARD_X + maxX*BLOCK_SIZE + BLOCK_SIZE*(minX+5), BOARD_Y + BLOCK_SIZE*(i+minX));
-			// 오른쪽 위 세로줄
+			// �삤瑜몄そ �쐞 �꽭濡쒖쨪
 			for(int i=1;i<5;i++) 
 				g.drawLine(BOARD_X + maxX*BLOCK_SIZE + BLOCK_SIZE*(i+minX), BOARD_Y + BLOCK_SIZE*minX, 
 						BOARD_X + maxX*BLOCK_SIZE + BLOCK_SIZE*(i+minX), BOARD_Y + BLOCK_SIZE*(minX+5));	
@@ -340,19 +340,19 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		
 		g.drawLine(this.getWidth()/2, BOARD_Y, this.getWidth()/2, BOARD_Y+maxY*BLOCK_SIZE);
 		
-		// <<2p 화면>>
-				// 까만 배경 부분
+		// <<2p �솕硫�>>
+				// 源뚮쭔 諛곌꼍 遺�遺�
 				g.setColor(Color.BLACK);
-				// 가운데
+				// 媛��슫�뜲
 				g.fillRect(3*BOARD_X+maxX*BLOCK_SIZE, BOARD_Y, maxX*BLOCK_SIZE, maxY*BLOCK_SIZE);
-				// 왼쪽
+				// �쇊履�
 				g.fillRect(2*BOARD_X+maxX*BLOCK_SIZE+BLOCK_SIZE*minX,BOARD_Y + BLOCK_SIZE, BLOCK_SIZE*5,BLOCK_SIZE*5);
-				// 오른쪽 위
+				// �삤瑜몄そ �쐞
 				g.fillRect(3*BOARD_X + 2*maxX*BLOCK_SIZE+BLOCK_SIZE*minX, BOARD_Y + BLOCK_SIZE, BLOCK_SIZE*5,BLOCK_SIZE*5);
-				// 오른쪽 아래
+				// �삤瑜몄そ �븘�옒
 				g.fillRect(3*BOARD_X + 2*maxX*BLOCK_SIZE+BLOCK_SIZE*minX, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*7, BLOCK_SIZE*5,BLOCK_SIZE*12);
 				
-				//HOLD  NEXT 출력
+				//HOLD  NEXT 異쒕젰
 				g.setFont(new Font(font.getFontName(),font.getStyle(),20));
 				g.setColor(Color.BLACK);
 				g.drawString("H O L D", 2*BOARD_X+maxX*BLOCK_SIZE+BLOCK_SIZE*minX + 15, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*5 + 20);
@@ -360,26 +360,26 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 				g.setFont(font);
 				
 		
-		//그리드 표시
+		//洹몃━�뱶 �몴�떆
 		if(usingGrid){
 			g.setColor(Color.darkGray);
-			// 가운데 가로줄
+			// 媛��슫�뜲 媛�濡쒖쨪
 			for(int i=1;i<maxY;i++) 
 				g.drawLine(3*BOARD_X+maxX*BLOCK_SIZE, BOARD_Y+BLOCK_SIZE*i, 3*BOARD_X + 2*maxX*BLOCK_SIZE, BOARD_Y + BLOCK_SIZE*i);
-			// 가운데 세로줄
+			// 媛��슫�뜲 �꽭濡쒖쨪
 			for(int i=1;i<maxX;i++) 
 				g.drawLine(3*BOARD_X+maxX*BLOCK_SIZE + BLOCK_SIZE*i, BOARD_Y, 3*BOARD_X+maxX*BLOCK_SIZE + BLOCK_SIZE*i, BOARD_Y + maxY*BLOCK_SIZE);
-			// 왼쪽 가로줄
+			// �쇊履� 媛�濡쒖쨪
 			for(int i=1;i<5;i++) 
 				g.drawLine(2*BOARD_X+maxX*BLOCK_SIZE+BLOCK_SIZE*minX, BOARD_Y + BLOCK_SIZE*(i+minX), 2*BOARD_X+maxX*BLOCK_SIZE+BLOCK_SIZE*(minX+5),BOARD_Y + BLOCK_SIZE*(i+minX));
-			// 왼쪽 세로줄
+			// �쇊履� �꽭濡쒖쨪
 			for(int i=1;i<5;i++) 
 				g.drawLine(2*BOARD_X+maxX*BLOCK_SIZE+BLOCK_SIZE*(i+minX),BOARD_Y + BLOCK_SIZE*minX, 2*BOARD_X+maxX*BLOCK_SIZE+BLOCK_SIZE*(i+minX),BOARD_Y + BLOCK_SIZE*(minX+5));
-			// 오른쪽 위 가로줄
+			// �삤瑜몄そ �쐞 媛�濡쒖쨪
 			for(int i=1;i<5;i++) 
 				g.drawLine(3*BOARD_X + 2*maxX*BLOCK_SIZE+BLOCK_SIZE*minX, BOARD_Y + BLOCK_SIZE*(i+minX), 
 						3*BOARD_X + 2*maxX*BLOCK_SIZE+BLOCK_SIZE*(minX+5), BOARD_Y + BLOCK_SIZE*(i+minX));
-			// 오른쪽 위 세로줄
+			// �삤瑜몄そ �쐞 �꽭濡쒖쨪
 			for(int i=1;i<5;i++) 
 				g.drawLine(3*BOARD_X + 2*maxX*BLOCK_SIZE+BLOCK_SIZE*(i+minX), BOARD_Y + BLOCK_SIZE*minX, 
 						3*BOARD_X + 2*maxX*BLOCK_SIZE+BLOCK_SIZE*(i+minX), BOARD_Y + BLOCK_SIZE*(minX+5));	
@@ -509,54 +509,54 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	}// run()
 
 	/**
-	 * 맵(보이기, 논리)을 상하로 이동한다.
+	 * 留�(蹂댁씠湲�, �끉由�)�쓣 �긽�븯濡� �씠�룞�븳�떎.
 	 * 
 	 * @param lineNumber
 	 * @param num        -1 or 1
 	 */
 	public void dropBoard(int lineNumber, int num) {
 
-		// 맵을 떨어트린다.
+		// 留듭쓣 �뼥�뼱�듃由곕떎.
 		this.dropMap(lineNumber, num);
 
-		// 좌표바꿔주기(1만큼증가)
+		// 醫뚰몴諛붽퓭二쇨린(1留뚰겮利앷�)
 		this.changeTetrisBlockLine(lineNumber, num);
 
-		// 다시 체크하기
+		// �떎�떆 泥댄겕�븯湲�
 		this.checkMap();
 
-		// 고스트 다시 뿌리기
+		// 怨좎뒪�듃 �떎�떆 肉뚮━湲�
 		this.showGhost();
 	}
 
 	/**
-	 * lineNumber의 위쪽 라인들을 모두 num칸씩 내린다.
+	 * lineNumber�쓽 �쐞履� �씪�씤�뱾�쓣 紐⑤몢 num移몄뵫 �궡由곕떎.
 	 * 
 	 * @param lineNumber
-	 * @param num        칸수 -1,1
+	 * @param num        移몄닔 -1,1
 	 */
 	private void dropMap(int lineNumber, int num) {
 		if (num == 1) {
-			// 한줄씩 내리기
+			// �븳以꾩뵫 �궡由ш린
 			for (int i = lineNumber; i > 0; i--) {
 				for (int j = 0; j < map[i].length; j++) {
 					map[i][j] = map[i - 1][j];
 				}
 			}
 
-			// 맨 윗줄은 null로 만들기
+			// 留� �쐵以꾩� null濡� 留뚮뱾湲�
 			for (int j = 0; j < map[0].length; j++) {
 				map[0][j] = null;
 			}
 		} else if (num == -1) {
-			// 한줄씩 올리기
+			// �븳以꾩뵫 �삱由ш린
 			for (int i = 1; i <= lineNumber; i++) {
 				for (int j = 0; j < map[i].length; j++) {
 					map[i - 1][j] = map[i][j];
 				}
 			}
 
-			// removeLine은 null로 만들기
+			// removeLine�� null濡� 留뚮뱾湲�
 			for (int j = 0; j < map[0].length; j++) {
 				map[lineNumber][j] = null;
 			}
@@ -564,10 +564,10 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	}
 
 	/**
-	 * lineNumber의 위쪽 라인들을 모두 num만큼 이동시킨다.
+	 * lineNumber�쓽 �쐞履� �씪�씤�뱾�쓣 紐⑤몢 num留뚰겮 �씠�룞�떆�궓�떎.
 	 * 
 	 * @param lineNumber
-	 * @param num        이동할 라인
+	 * @param num        �씠�룞�븷 �씪�씤
 	 */
 	private void changeTetrisBlockLine(int lineNumber, int num) {
 		int y = 0, posY = 0;
@@ -580,7 +580,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	}
 
 	/**
-	 * 테트리스 블럭을 고정시킨다.
+	 * �뀒�듃由ъ뒪 釉붾윮�쓣 怨좎젙�떆�궓�떎.
 	 */
 	private void fixingTetrisBlock() {
 		synchronized (this) {
@@ -596,7 +596,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		boolean isCombo = false;
 		removeLineCount = 0;
 
-		// drawList 추가
+		// drawList 異붽�
 		for (Block block : shap.getBlock()) {
 			blockList.add(block);
 		}
@@ -609,19 +609,19 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		else
 			removeLineCombo = 0;
 
-		// 콜백메소드
+		// 肄쒕갚硫붿냼�뱶
 		this.getFixBlockCallBack(blockList, removeLineCombo, removeLineCount);
 
-		// 다음 테트리스 블럭을 가져온다.
+		// �떎�쓬 �뀒�듃由ъ뒪 釉붾윮�쓣 媛��졇�삩�떎.
 		this.nextTetrisBlock();
 
-		// 홀드가능상태로 만들어준다.
+		// ���뱶媛��뒫�긽�깭濡� 留뚮뱾�뼱以��떎.
 		isHold = false;
 	}// fixingTetrisBlock()
 
 	/**
 	 * 
-	 * @return true-지우기성공, false-지우기실패
+	 * @return true-吏��슦湲곗꽦怨�, false-吏��슦湲곗떎�뙣
 	 */
 	private boolean checkMap() {
 		boolean isCombo = false;
@@ -631,22 +631,22 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		for (int i = 0; i < blockList.size(); i++) {
 			mainBlock = blockList.get(i);
 
-			// map에 추가
+			// map�뿉 異붽�
 			if (mainBlock.getY() < 0 || mainBlock.getY() >= maxY)
 				continue;
 
 			if (mainBlock.getY() < maxY && mainBlock.getX() < maxX)
 				map[mainBlock.getY()][mainBlock.getX()] = mainBlock;
 
-			// 줄이 꽉 찼을 경우. 게임을 종료한다.
+			// 以꾩씠 苑� 李쇱쓣 寃쎌슦. 寃뚯엫�쓣 醫낅즺�븳�떎.
 			if (mainBlock.getY() == 1 && mainBlock.getX() > 2 && mainBlock.getX() < 7) {
 				this.gameEndCallBack();
-				GameMusic.close(); // 게임음악 종료
-				GameEndPopUp(); // 게임 종료 시 팝업 이벤트 발생 , millions
+				GameMusic.close(); // 寃뚯엫�쓬�븙 醫낅즺
+				GameEndPopUp(); // 寃뚯엫 醫낅즺 �떆 �뙘�뾽 �씠踰ㅽ듃 諛쒖깮 , millions
 				break;
 			}
 
-			// 1줄개수 체크
+			// 1以꾧컻�닔 泥댄겕
 			count = 0;
 			for (int j = 0; j < maxX; j++) {
 				if (map[mainBlock.getY()][j] != null)
@@ -654,7 +654,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 
 			}
 
-			// block의 해당 line을 지운다.
+			// block�쓽 �빐�떦 line�쓣 吏��슫�떎.
 			if (count == maxX) {
 				removeLineCount++;
 				this.removeBlockLine(mainBlock.getY());
@@ -665,7 +665,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	}
 
 	/**
-	 * 테트리스 블럭 리스트에서 테트리스 블럭을 받아온다.
+	 * �뀒�듃由ъ뒪 釉붾윮 由ъ뒪�듃�뿉�꽌 �뀒�듃由ъ뒪 釉붾윮�쓣 諛쏆븘�삩�떎.
 	 */
 	public void nextTetrisBlock() {
 		shap = nextBlocks.get(0);
@@ -681,13 +681,13 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	}
 
 	/**
-	 * lineNumber 라인을 삭제하고, drawlist에서 제거하고, map을 아래로 내린다.
+	 * lineNumber �씪�씤�쓣 �궘�젣�븯怨�, drawlist�뿉�꽌 �젣嫄고븯怨�, map�쓣 �븘�옒濡� �궡由곕떎.
 	 * 
-	 * @param lineNumber 삭제라인
+	 * @param lineNumber �궘�젣�씪�씤
 	 */
 	private void removeBlockLine(int lineNumber) {
 		new Music("Clear.mp3", false).start();
-		// 1줄을 지워줌
+		// 1以꾩쓣 吏��썙以�
 		for (int j = 0; j < maxX ; j++) {
 			for (int s = 0; s < blockList.size(); s++) {
 				Block b = blockList.get(s);
@@ -701,7 +701,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	}
 
 	/**
-	 * TODO : 게임종료콜벡 게임이 종료되면 실행되는 메소드
+	 * TODO : 寃뚯엫醫낅즺肄쒕깹 寃뚯엫�씠 醫낅즺�릺硫� �떎�뻾�릺�뒗 硫붿냼�뱶
 	 */
 	public void gameEndCallBack() {
 		client.gameover();
@@ -709,7 +709,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	}
 
 	/**
-	 * 고스트블럭을 보여준다.
+	 * 怨좎뒪�듃釉붾윮�쓣 蹂댁뿬以��떎.
 	 */
 	private void showGhost() {
 		ghost = getBlockClone(shap, true);
@@ -718,9 +718,9 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	}
 
 	/**
-	 * 랜덤으로 테트리스 블럭을 생성하고 반환한다.
+	 * �옖�뜡�쑝濡� �뀒�듃由ъ뒪 釉붾윮�쓣 �깮�꽦�븯怨� 諛섑솚�븳�떎.
 	 * 
-	 * @return 테트리스 블럭
+	 * @return �뀒�듃由ъ뒪 釉붾윮
 	 */
 	public TetrisBlock getRandomTetrisBlock() {
 		switch ((int) (Math.random() * 7)) {
@@ -743,10 +743,10 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	}
 
 	/**
-	 * tetrisBlock과 같은 모양으로 고스트의 블럭모양을 반환한다.
+	 * tetrisBlock怨� 媛숈� 紐⑥뼇�쑝濡� 怨좎뒪�듃�쓽 釉붾윮紐⑥뼇�쓣 諛섑솚�븳�떎.
 	 * 
-	 * @param tetrisBlock 고스트의 블럭모양을 결정할 블럭
-	 * @return 고스트의 블럭모양을 반환
+	 * @param tetrisBlock 怨좎뒪�듃�쓽 釉붾윮紐⑥뼇�쓣 寃곗젙�븷 釉붾윮
+	 * @return 怨좎뒪�듃�쓽 釉붾윮紐⑥뼇�쓣 諛섑솚
 	 */
 	public TetrisBlock getBlockClone(TetrisBlock tetrisBlock, boolean isGhost) {
 		TetrisBlock blocks = null;
@@ -783,10 +783,10 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	}
 
 	/**
-	 * TODO : 콜백메소드 테트리스 블럭이 고정될 때 자동 호출 된다.
+	 * TODO : 肄쒕갚硫붿냼�뱶 �뀒�듃由ъ뒪 釉붾윮�씠 怨좎젙�맆 �븣 �옄�룞 �샇異� �맂�떎.
 	 * 
-	 * @param removeCombo   현재 콤보 수
-	 * @param removeMaxLine 한번에 지운 줄수
+	 * @param removeCombo   �쁽�옱 肄ㅻ낫 �닔
+	 * @param removeMaxLine �븳踰덉뿉 吏��슫 以꾩닔
 	 */
 	public void getFixBlockCallBack(ArrayList<Block> blockList, int removeCombo, int removeMaxLine) {
 		if (removeCombo < 3) {
@@ -812,7 +812,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	}
 
 	/**
-	 * 블럭을 홀드시킨다.
+	 * 釉붾윮�쓣 ���뱶�떆�궓�떎.
 	 */
 	public void playBlockHold() {
 		if(isHold) return;
@@ -833,7 +833,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	}
 
 	/**
-	 * 가장 밑에 줄에 블럭을 생성한다.
+	 * 媛��옣 諛묒뿉 以꾩뿉 釉붾윮�쓣 �깮�꽦�븳�떎.
 	 * 
 	 * @param numOfLine
 	 */
@@ -841,8 +841,8 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 
 	public void addBlockLine(int numOfLine) {
 		stop = true;
-		// 내리기가 있을 때까지 대기한다.
-		// 내리기를 모두 실행한 후 다시 시작한다.
+		// �궡由ш린媛� �엳�쓣 �븣源뚯� ��湲고븳�떎.
+		// �궡由ш린瑜� 紐⑤몢 �떎�뻾�븳 �썑 �떎�떆 �떆�옉�븳�떎.
 		Block block;
 		int rand = (int) (Math.random() * maxX);
 		for (int i = 0; i < numOfLine; i++) {
@@ -855,7 +855,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 					map[maxY - 1][col] = block;
 				}
 			}
-			// 만약 내려오는 블럭과 겹치면 블럭을 위로 올린다.
+			// 留뚯빟 �궡�젮�삤�뒗 釉붾윮怨� 寃뱀튂硫� 釉붾윮�쓣 �쐞濡� �삱由곕떎.
 			boolean up = false;
 			for (int j = 0; j < shap.getBlock().length; j++) {
 				Block sBlock = shap.getBlock(j);
@@ -876,7 +876,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			this.notify();
 		}
 	}
-	// popup 이벤트 함수 , millions
+	// popup �씠踰ㅽ듃 �븿�닔 , millions
 	public void GameEndPopUp() {  
 		GameEndSound = new Music("GameOver.mp3", false); 
 		GameEndSound.start();	
@@ -924,9 +924,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			if (usingEffect)
 				new Music("Space.mp3", false).start();	// millions
 			
-		} else if (e.getKeyCode() == Button.shift_key) {
-			if (usingEffect)
-				new Music("ShiftSound.mp3", false).start();		// millions
+		} else if (e.getKeyCode() == Button.shift_key) {	// millions
 			playBlockHold();
 		}
 		this.showGhost();
@@ -949,7 +947,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	public void mouseReleased(MouseEvent e) {
 	}
 	
-	// 게임 뮤직 키고 끄기 millions
+	// 寃뚯엫 裕ㅼ쭅 �궎怨� �걚湲� millions
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btnStart) {
 			
