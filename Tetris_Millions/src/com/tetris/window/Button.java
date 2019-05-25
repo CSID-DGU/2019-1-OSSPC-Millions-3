@@ -15,7 +15,7 @@ public class Button {
 	Container contentPane;
 	String keyString = null;
 	static int left_key = 37, right_key=39, down_key=40, up_key=38, space_key=32, shift_key=16, keyCode, pk=0;
-	// ������
+	// »ýŒºÀÚ
 	public Button() {}
  
 	public int getLeft_key() {
@@ -57,10 +57,10 @@ public class Button {
 	void FrameShow() {
 	 
 	 // Frame
-	 frame = new JFrame("Ű ����");
+	 frame = new JFrame("Å° Œ³Á€");
 	  frame.setPreferredSize(new Dimension(350, 250));
 	  frame.setLocation(785, 400);
-	  frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE); // ������ ���� �� DISPOSE_ON_CLOSE�� �غ� ��.
+	  frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE); // ¹®ÁŠ°¡ »ý±â œÃ DISPOSE_ON_CLOSE·Î ÇØºŒ °Í.
 	  frame.pack();
 	  frame.setVisible(true);
 	  
@@ -68,7 +68,7 @@ public class Button {
 	  centerPanel = new JPanel();
 	  contentPane = frame.getContentPane();
 
-	  // �гο� ��ư 6�� �߰�
+	  // ÆÐ³Î¿¡ ¹öÆ° 6°³ Ãß°¡
 	  centerPanel.setLayout(new GridLayout(3, 2));
 	  for (int i = 0; i < 6; i++) {
 	   btn[i] = new JButton();
@@ -78,7 +78,7 @@ public class Button {
 	   btn[i].addActionListener(bingoBtnClickListener);
 	  }
 	  
-	  // ��ư text  
+	  // ¹öÆ° text  
 	  btn[0].setText(" Left ");
 	  btn[1].setText(" Right ");
 	  btn[2].setText(" Down ");
@@ -120,14 +120,14 @@ public class Button {
 
  }
 
- // 6�� �� �ϳ��� Ŭ������ �� ������
+ // 6°³ Áß ÇÏ³ªžŠ Å¬ž¯ÇßÀ» ¶§ ž®œº³Ê
 
  class BtnArrayListener implements ActionListener {
 	 
 	 public void actionPerformed(ActionEvent event) {
 		 eventBtn = (JButton) event.getSource();   
 	   
-		 keyFrame = new JFrame("��ư����");
+		 keyFrame = new JFrame("¹öÆ°º¯°æ");
 		 JPanel panel1 = new JPanel();
 		 JPanel panel2 = new JPanel();
 	
@@ -135,62 +135,62 @@ public class Button {
 		 contentPane1.setLayout(new BorderLayout());
 	 
 	
-		 // ������ ����
+		 // ÇÁ·¹ÀÓ »ýŒº
 		 keyFrame.setPreferredSize(new Dimension(400, 150));
 		 keyFrame.setLocation(760, 450);
 		 keyFrame.pack();
 	   
-		 // �ؽ�Ʈ�ʵ� ����
+		 // ÅØœºÆ®ÇÊµå »ýŒº
 		 keysetNumTxt = new JTextField("", 5);
 		 TextClickListener textClickListener = new TextClickListener();
 		 keysetNumTxt.addMouseListener(textClickListener);
 	
 		 KeyPressed keyPressed = new KeyPressed();
-		 keysetNumTxt.addKeyListener(keyPressed); // �ؽ�Ʈ�ʵ忡 Ű�� �ԷµǾ��� �� ������ ȣ��
+		 keysetNumTxt.addKeyListener(keyPressed); // ÅØœºÆ®ÇÊµå¿¡ Å°°¡ ÀÔ·ÂµÇŸúÀ» ¶§ ž®œº³Ê È£Ãâ
 	   
 		 if ("b0".equals( eventBtn.getName() ) ) {
 			 keyFrame.setVisible(true);
-			 // ���̺� ����
-			 keyLabel = new JLabel("Left Ű�� �Է��ϼ���.");
+			 // ·¹ÀÌºí »ýŒº
+			 keyLabel = new JLabel("Left Å°žŠ ÀÔ·ÂÇÏŒŒ¿ä.");
 			 pk=0;
 			 
 		 } else if("b1".equals( eventBtn.getName() ) ) {
 			 keyFrame.setVisible(true);
-			 // ���̺� ����
-			 keyLabel = new JLabel("Right Ű�� �Է��ϼ���.");
+			 // ·¹ÀÌºí »ýŒº
+			 keyLabel = new JLabel("Right Å°žŠ ÀÔ·ÂÇÏŒŒ¿ä.");
 			 pk=1;
 		   
 		 } else if ("b2".equals( eventBtn.getName() ) ) {
 			 keyFrame.setVisible(true);
-			 // ���̺� ����
-			 keyLabel = new JLabel("Down Ű�� �Է��ϼ���.");
+			 // ·¹ÀÌºí »ýŒº
+			 keyLabel = new JLabel("Down Å°žŠ ÀÔ·ÂÇÏŒŒ¿ä.");
 			 pk=2;
 		   
 		 } else if ("b3".equals( eventBtn.getName() ) ) {
 			 keyFrame.setVisible(true);
-			 // ���̺� ����
-			 keyLabel = new JLabel("Rotation Ű�� �Է��ϼ���.");
+			 // ·¹ÀÌºí »ýŒº
+			 keyLabel = new JLabel("Rotation Å°žŠ ÀÔ·ÂÇÏŒŒ¿ä.");
 			 pk=3;
 		   
 		 } else if ("b4".equals( eventBtn.getName() ) ) {
 			 keyFrame.setVisible(true);
-			 // ���̺� ����
-			 keyLabel = new JLabel("Drop Ű�� �Է��ϼ���.");
+			 // ·¹ÀÌºí »ýŒº
+			 keyLabel = new JLabel("Drop Å°žŠ ÀÔ·ÂÇÏŒŒ¿ä.");
 			 pk=4;
 		   
 		 } else if ("b5".equals( eventBtn.getName() ) ) {
 			 keyFrame.setVisible(true);
-			 // ���̺� ����
-			 keyLabel = new JLabel("Hold Ű�� �Է��ϼ���.");
+			 // ·¹ÀÌºí »ýŒº
+			 keyLabel = new JLabel("Hold Å°žŠ ÀÔ·ÂÇÏŒŒ¿ä.");
 			 pk=5;
 		 }
 	   
-	   // �г� �߰�
+	   // ÆÐ³Î Ãß°¡
 	   
 	   panel1.add(keyLabel);
 	   panel2.add(keysetNumTxt);
 	
-	   // ������ ���̾ƿ�
+	   // ÇÁ·¹ÀÓ ·¹ÀÌŸÆ¿ô
 	
 	   keyFrame.getContentPane().add(BorderLayout.NORTH, panel1);
 	   keyFrame.getContentPane().add(BorderLayout.CENTER, panel2);
@@ -203,46 +203,143 @@ public class Button {
 	 }
  }
  
- // ��ư���� �ҷ��� �����ӿ� Ű�Է½� ������
+ // ¹öÆ°¿¡Œ­ ºÒ·¯¿Â ÇÁ·¹ÀÓ¿¡ Å°ÀÔ·ÂœÃ ž®œº³Ê
 
  class KeyPressed implements KeyListener{
 	 public void keyPressed(KeyEvent e) {
 		 BtnArrayListener btnArray = new  BtnArrayListener();
 
 		   
-		 keyString = ""; // �Է� �� �ؽ�Ʈ �������� �ʱ�ȭ
+//		 keyString = ""; // ÀÔ·Â ÈÄ ÅØœºÆ® Àü¿ªº¯Œö ÃÊ±âÈ­
 		 System.out.println("=======");
-		 keyString += e.getKeyText(e.getKeyCode());
+		 keyString = e.getKeyText(e.getKeyCode());
 		 keyCode = e.getKeyCode();
 		 System.out.println(e.getKeyCode());
 		 if (e.getKeyCode() != 10) {
 			 if (pk == 0) {
-				 setLeft_key(keyCode);
-				 btn[0].setText("Left : "+ keyString);
-				 keyFrame.setVisible(false); // �Է�â ����
+				 if(keyCode == right_key) {
+					 warning_Right();
+				 } else if(keyCode == up_key) {
+					 warning_Up();
+				 } else if(keyCode == down_key) {
+					 warning_Down();
+				 } else if(keyCode == space_key) {
+					 warning_Drop();
+				 } else if(keyCode == shift_key) {
+					 warning_Hold();
+				 } else {
+					 setLeft_key(keyCode);
+					 btn[0].setText("Left : "+ keyString);
+					 keyFrame.setVisible(false); // ÀÔ·ÂÃ¢ ÁŸ·á
+					 }
+				 
 			 } else if (pk == 1){
-				 setRight_key(keyCode);
-				 btn[1].setText("Right : "+ keyString);
-				 keyFrame.setVisible(false); // �Է�â ����	
+				 if (keyCode == left_key) {
+					 warning_Left();					 
+				 } else if(keyCode == up_key) {
+					 warning_Up();
+				 } else if(keyCode == down_key) {
+					 warning_Down();
+				 } else if(keyCode == space_key) {
+					 warning_Drop();
+				 } else if(keyCode == shift_key) {
+					 warning_Hold();
+				 } else {
+					 setRight_key(keyCode);
+					 btn[1].setText("Right : "+ keyString);
+					 keyFrame.setVisible(false); // ÀÔ·ÂÃ¢ ÁŸ·á	
+					 }
+				 
 			 } else if (pk == 2){
-				 setDown_key(keyCode);
-				 btn[2].setText("Down : "+ keyString);
-				 keyFrame.setVisible(false); // �Է�â ����	
+				 if (keyCode == left_key) {
+					 warning_Left();					 
+				 } else if(keyCode == right_key) {
+					 warning_Right();
+				 } else if(keyCode == up_key) {
+					 warning_Up();
+				 } else if(keyCode == space_key) {
+					 warning_Drop();
+				 } else if(keyCode == shift_key) {
+					 warning_Hold();
+				 } else {
+					 setDown_key(keyCode);
+					 btn[2].setText("Down : "+ keyString);
+					 keyFrame.setVisible(false); // ÀÔ·ÂÃ¢ ÁŸ·á	
+					 }
+				 
 			 } else if (pk == 3){
-				 setUp_key(keyCode);
-				 btn[3].setText("Rotation : "+ keyString);
-				 keyFrame.setVisible(false); // �Է�â ����	
+				 if (keyCode == left_key) {
+					 warning_Left();					 
+				 } else if(keyCode == right_key) {
+					 warning_Right();
+				 } else if(keyCode == down_key) {
+					 warning_Down();
+				 } else if(keyCode == space_key) {
+					 warning_Drop();
+				 } else if(keyCode == shift_key) {
+					 warning_Hold();
+				 } else {
+					 setUp_key(keyCode);
+					 btn[3].setText("Rotation : "+ keyString);
+					 keyFrame.setVisible(false); // ÀÔ·ÂÃ¢ ÁŸ·á	
+					 }
+				 
 			 } else if (pk == 4){
-				 setSpace_key(keyCode);
-				 btn[4].setText("Drop : "+ keyString);
-				 keyFrame.setVisible(false); // �Է�â ����	
+				 if (keyCode == left_key) {
+					 warning_Left();					 
+				 } else if(keyCode == right_key) {
+					 warning_Right();
+				 } else if(keyCode == up_key) {
+					 warning_Up();
+				 } else if(keyCode == down_key) {
+					 warning_Down();
+				 } else if(keyCode == shift_key) {
+					 warning_Hold();
+				 } else {
+					 setSpace_key(keyCode);
+					 btn[4].setText("Drop : "+ keyString);
+					 keyFrame.setVisible(false); // ÀÔ·ÂÃ¢ ÁŸ·á	
+					 }
+				 
 			 } else if (pk == 5){
-				 setShift_key(keyCode);
-				 btn[5].setText("Hold : "+ keyString);
-				 keyFrame.setVisible(false); // �Է�â ����	
+				 if (keyCode == left_key) {
+					 warning_Left();					 
+				 } else if(keyCode == right_key) {
+					 warning_Right();
+				 } else if(keyCode == up_key) {
+					 warning_Up();
+				 } else if(keyCode == down_key) {
+					 warning_Down();
+				 } else if(keyCode == space_key) {
+					 warning_Drop();
+				 } else {
+					 setShift_key(keyCode);
+					 btn[5].setText("Hold : "+ keyString);
+					 keyFrame.setVisible(false); // ÀÔ·ÂÃ¢ ÁŸ·á	
+					 }
+			 } else {keyFrame.setVisible(false);
 			 }
-		 } else {keyFrame.setVisible(false);}
+		}
 	 }
+	 
+	public void warning_Left() {
+		JOptionPane.showMessageDialog(null, "left_key ¿Í Áßº¹µËŽÏŽÙ. ŽÙž¥ Å°žŠ ÀÔ·ÂÇØÁÖŒŒ¿ä.", "Áßº¹µÈ key", JOptionPane.ERROR_MESSAGE);
+	}
+	public void warning_Right() {
+		JOptionPane.showMessageDialog(null, "right_key ¿Í Áßº¹µËŽÏŽÙ. ŽÙž¥ Å°žŠ ÀÔ·ÂÇØÁÖŒŒ¿ä.", "Áßº¹µÈ key", JOptionPane.ERROR_MESSAGE);
+	}
+	public void warning_Up() {
+		JOptionPane.showMessageDialog(null, "up_key ¿Í Áßº¹µËŽÏŽÙ. ŽÙž¥ Å°žŠ ÀÔ·ÂÇØÁÖŒŒ¿ä.", "Áßº¹µÈ key", JOptionPane.ERROR_MESSAGE);
+	}
+	public void warning_Down() {
+		JOptionPane.showMessageDialog(null, "down_key ¿Í Áßº¹µËŽÏŽÙ. ŽÙž¥ Å°žŠ ÀÔ·ÂÇØÁÖŒŒ¿ä.", "Áßº¹µÈ key", JOptionPane.ERROR_MESSAGE);
+	}
+	public void warning_Drop() {
+		JOptionPane.showMessageDialog(null, "drop_key ¿Í Áßº¹µËŽÏŽÙ. ŽÙž¥ Å°žŠ ÀÔ·ÂÇØÁÖŒŒ¿ä.", "Áßº¹µÈ key", JOptionPane.ERROR_MESSAGE);
+	}
+	public void warning_Hold() {
+		JOptionPane.showMessageDialog(null, "hold_key ¿Í Áßº¹µËŽÏŽÙ. ŽÙž¥ Å°žŠ ÀÔ·ÂÇØÁÖŒŒ¿ä.", "Áßº¹µÈ key", JOptionPane.ERROR_MESSAGE);
+	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
@@ -255,4 +352,3 @@ public class Button {
 	}
   }
  }
-
