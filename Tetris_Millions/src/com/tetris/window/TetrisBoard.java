@@ -54,7 +54,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	private static int minX = 1, minY = 0, maxX = 10, maxY = 21, down = 50, up = 0;
 	private static final int MESSAGE_WIDTH = BLOCK_SIZE * 7;
 	private static final int MESSAGE_HEIGHT = BLOCK_SIZE * 6;
-	public static final int PANEL_WIDTH = 2 * ( maxX * BLOCK_SIZE + MESSAGE_WIDTH + BOARD_X);
+	public static final int PANEL_WIDTH = 2 * ( maxX * BLOCK_SIZE + MESSAGE_WIDTH + BOARD_X) + 20;
 	public static final int PANEL_HEIGHT = maxY * BLOCK_SIZE + MESSAGE_HEIGHT + BOARD_Y;
 
 	private SystemMessageArea systemMsg = new SystemMessageArea(BLOCK_SIZE * 1, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE * 7,BLOCK_SIZE * 5, BLOCK_SIZE * 12);
@@ -112,8 +112,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		this.setLayout(null);
 		this.setFocusable(true);
 
-		btnStart.setBounds(PANEL_WIDTH - BLOCK_SIZE * 7, PANEL_HEIGHT - messageArea.getHeight(), BLOCK_SIZE * 7,
-				messageArea.getHeight() / 2);
+		btnStart.setBounds(PANEL_WIDTH - BLOCK_SIZE * 7, PANEL_HEIGHT - messageArea.getHeight(), BLOCK_SIZE * 7, messageArea.getHeight() / 2);
 		btnStart.setFocusable(false);
 		btnStart.setEnabled(false);
 		btnStart.addActionListener(this);
@@ -206,8 +205,20 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			public void stateChanged(ChangeEvent arg0) {
 				if (checkBGM.isSelected() == true) {
 					usingBGM = true;
+					if(GameMusic.isAlive() && GameMusic != null) {
+						GameMusic.close();
+						GameMusic = new Music("GameMusic.mp3", true );
+						GameMusic.start();
+					}else {
+						GameMusic = new Music("GameMusic.mp3", true );
+						GameMusic.start();
+					}
 				} else {
 					usingBGM = false;
+					if(GameMusic != null && GameMusic.isAlive()) {
+						GameMusic.close();
+					}
+					
 				}	
 				TetrisBoard.this.setRequestFocusEnabled(true);
 				TetrisBoard.this.repaint();
@@ -293,51 +304,33 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		g.drawString("�땳�꽕�엫 : " + nickName, 20, 40);
 
 		// �냽�룄
-		Font font = g.getFont();
-		g.setFont(new Font("援대┝", Font.BOLD, 13));
-		g.drawString("�냽�룄", PANEL_WIDTH - BLOCK_SIZE * 15, 20);
+		Font font= g.getFont();
+		g.setFont(new Font("굴림", Font.BOLD,13));
+		g.drawString("속도", PANEL_WIDTH - BLOCK_SIZE*15, 20);
 		g.setFont(font);
 
-		g.setColor(Color.lightGray);
-		g.fillRect(BOARD_X, BOARD_Y, maxX*BLOCK_SIZE, maxY*BLOCK_SIZE);
-		// �쇊履�
+		g.setColor(Color.BLACK);
+		g.fillRect(BOARD_X + BLOCK_SIZE*minX, BOARD_Y, maxX*BLOCK_SIZE+1, maxY*BLOCK_SIZE+1);
 		g.fillRect(BLOCK_SIZE*minX ,BOARD_Y + BLOCK_SIZE, BLOCK_SIZE*5,BLOCK_SIZE*5);
-		// �삤瑜몄そ �쐞
-		g.fillRect(BOARD_X + maxX*BLOCK_SIZE+ BLOCK_SIZE*minX, BOARD_Y + BLOCK_SIZE, BLOCK_SIZE*5,BLOCK_SIZE*5);
-		// �삤瑜몄そ �븘�옒
-		g.fillRect(BOARD_X + maxX*BLOCK_SIZE + BLOCK_SIZE*minX, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*7, BLOCK_SIZE*5,BLOCK_SIZE*12);
-
-		// HOLD NEXT 異쒕젰
-		g.setFont(new Font(font.getFontName(), font.getStyle(), 20));
-		g.drawString("H O L D", BLOCK_SIZE*minX + 15, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*5 + 20);
-		g.drawString("N E X T", BOARD_X + maxX*BLOCK_SIZE+ BLOCK_SIZE*minX + 15, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*5 + 20);
+		g.fillRect(BOARD_X + BLOCK_SIZE*minX + (maxX+1)*BLOCK_SIZE+1,BOARD_Y + BLOCK_SIZE, BLOCK_SIZE*5,BLOCK_SIZE*5);
+		g.fillRect(BOARD_X + BLOCK_SIZE*minX + (maxX+1)*BLOCK_SIZE+1,BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*7, BLOCK_SIZE*5,BLOCK_SIZE*12);
+		
+		//HOLD  NEXT 출력
+		g.setFont(new Font(font.getFontName(),font.getStyle(),20));
+		g.drawString("H O L D", BLOCK_SIZE + 12, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*5 + 20);
+		g.drawString("N E X T", BOARD_X + BLOCK_SIZE + (maxX+1)*BLOCK_SIZE+1 + 12, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*5 + 20);
 		g.setFont(font);
-
-		// 洹몃━�뱶 �몴�떆
-		if (usingGrid) {
-			g.setColor(Color.WHITE);
-			for(int i=1;i<maxY;i++) 
-				g.drawLine(BOARD_X, BOARD_Y+BLOCK_SIZE*i, BOARD_X + maxX*BLOCK_SIZE, BOARD_Y + BLOCK_SIZE*i);
-			// 媛��슫�뜲 �꽭濡쒖쨪
-			for(int i=1;i<maxX;i++) 
-				g.drawLine(BOARD_X + BLOCK_SIZE*i, BOARD_Y, BOARD_X + BLOCK_SIZE*i, BOARD_Y + maxY*BLOCK_SIZE);
-			// �쇊履� 媛�濡쒖쨪
-			for(int i=1;i<5;i++) 
-				g.drawLine(BLOCK_SIZE*minX ,BOARD_Y + BLOCK_SIZE*(i+minX), BLOCK_SIZE*(minX+5),BOARD_Y + BLOCK_SIZE*(i+minX));
-			// �쇊履� �꽭濡쒖쨪
-			for(int i=1;i<5;i++) 
-				g.drawLine(BLOCK_SIZE*(i+minX) ,BOARD_Y + BLOCK_SIZE*minX, BLOCK_SIZE*(i+minX),BOARD_Y + BLOCK_SIZE*(minX+5));
-			// �삤瑜몄そ �쐞 媛�濡쒖쨪
-			for(int i=1;i<5;i++) 
-				g.drawLine(BOARD_X + BLOCK_SIZE*minX + maxX*BLOCK_SIZE, BOARD_Y + BLOCK_SIZE*(i+minX), 
-						BOARD_X + maxX*BLOCK_SIZE + BLOCK_SIZE*(minX+5), BOARD_Y + BLOCK_SIZE*(i+minX));
-			// �삤瑜몄そ �쐞 �꽭濡쒖쨪
-			for(int i=1;i<5;i++) 
-				g.drawLine(BOARD_X + maxX*BLOCK_SIZE + BLOCK_SIZE*(i+minX), BOARD_Y + BLOCK_SIZE*minX, 
-						BOARD_X + maxX*BLOCK_SIZE + BLOCK_SIZE*(i+minX), BOARD_Y + BLOCK_SIZE*(minX+5));	
 		
+		//그리드 표시
+		if(usingGrid){
+			g.setColor(Color.darkGray);
+			for(int i=1;i<maxY;i++) g.drawLine(BOARD_X + BLOCK_SIZE*minX, BOARD_Y+BLOCK_SIZE*(i+minY), BOARD_X + (maxX+minX)*BLOCK_SIZE, BOARD_Y+BLOCK_SIZE*(i+minY));
+			for(int i=1;i<maxX;i++) g.drawLine(BOARD_X + BLOCK_SIZE*(i+minX), BOARD_Y+BLOCK_SIZE*minY, BOARD_X + BLOCK_SIZE*(i+minX), BOARD_Y+BLOCK_SIZE*(minY+maxY));
+			for(int i=1;i<5;i++) g.drawLine(BLOCK_SIZE*minX ,BOARD_Y + BLOCK_SIZE*(i+1), BLOCK_SIZE*(minX+5)-1,BOARD_Y + BLOCK_SIZE*(i+1));
+			for(int i=1;i<5;i++) g.drawLine(BLOCK_SIZE*(minY+i+1) ,BOARD_Y + BLOCK_SIZE, BLOCK_SIZE*(minY+i+1),BOARD_Y + BLOCK_SIZE*(minY+6)-1);
+			for(int i=1;i<5;i++) g.drawLine(BOARD_X + BLOCK_SIZE*minX + (maxX+1)*BLOCK_SIZE+1, BOARD_Y + BLOCK_SIZE*(i+1), BOARD_X + BLOCK_SIZE*minX + (maxX+1)*BLOCK_SIZE+BLOCK_SIZE*5,BOARD_Y + BLOCK_SIZE*(i+1));
+			for(int i=1;i<5;i++) g.drawLine(BOARD_X + BLOCK_SIZE*minX + (maxX+1+i)*BLOCK_SIZE+1, BOARD_Y + BLOCK_SIZE, BOARD_X + BLOCK_SIZE*minX + BLOCK_SIZE+BLOCK_SIZE*(10+i)+1,BOARD_Y + BLOCK_SIZE*6-1);	
 		}
-		
 		g.drawLine(this.getWidth()/2, BOARD_Y, this.getWidth()/2, BOARD_Y+maxY*BLOCK_SIZE);
 		
 		// <<2p �솕硫�>>
@@ -951,7 +944,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btnStart) {
 			
-			if(GameMusic != null && GameMusic.isAlive()) {
+			if(GameMusic != null && GameMusic.isAlive() && usingBGM) {
 				GameMusic.close();
 				if(usingBGM) {
 					GameMusic = new Music("GameMusic.mp3", true );
@@ -971,6 +964,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			}else{
 				this.gameStart((int)comboSpeed.getSelectedItem());
 			}
+			
 		}else if(e.getSource() == btnExit){
 			if(GameMusic != null && GameMusic.isAlive()) {
 				GameMusic.close();

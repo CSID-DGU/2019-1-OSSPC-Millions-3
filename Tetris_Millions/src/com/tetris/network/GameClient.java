@@ -193,8 +193,6 @@ public class GameClient implements Runnable{
 	public void gameover(){
 		DataShip data = new DataShip(DataShip.GAME_OVER);
 		send(data);
-		TetrisBoard.GameEndPopUp();
-		TetrisBoard.GameMusic.close();
 	}
 	public void reGameover(String msg, int totalAdd){
 		tetris.printSystemMessage(msg);
