@@ -177,6 +177,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		});
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 		checkEffect.setBounds(PANEL_WIDTH - BLOCK_SIZE * 7 + 35, 5, 95, 20);		//È¿°úÀ½ checkbox À§Ä¡ ¹× µðÀÚÀÎ(millions)
 		checkEffect.setBackground(new Color(255, 255, 255));
 		checkEffect.setForeground(Color.GRAY);
@@ -187,6 +188,12 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		checkEffect.setForeground(Color.GRAY);
 		checkEffect.setFont(new Font("æ´ëŒ€â”", Font.BOLD, 13));
 >>>>>>> 3748fd147596c04e6ef70dfe4e2546ba96015336
+=======
+		checkEffect.setBounds(PANEL_WIDTH - BLOCK_SIZE * 7 + 35, 5, 95, 20);		//ï¿½ìŠšæ€¨ì‡±ì“¬ checkbox ï¿½ìžç§»ï¿½ è«›ï¿½ ï¿½ëµ’ï¿½ì˜„ï¿½ì”¤(millions)
+		checkEffect.setBackground(new Color(255, 255, 255));
+		checkEffect.setForeground(Color.GRAY);
+		checkEffect.setFont(new Font("æ´ëŒ€â”", Font.BOLD, 13));
+>>>>>>> origin
 		checkEffect.setRequestFocusEnabled(false);
 		checkEffect.addChangeListener(new ChangeListener() {
 			
@@ -206,10 +213,14 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		checkBGM.setBackground(new Color(255, 255, 255));
 		checkBGM.setForeground(Color.GRAY);
 <<<<<<< HEAD
+<<<<<<< HEAD
 		checkBGM.setFont(new Font("±¼¸²", Font.BOLD, 13));
 =======
 		checkBGM.setFont(new Font("æ´ëŒ€â”", Font.BOLD, 13));
 >>>>>>> 3748fd147596c04e6ef70dfe4e2546ba96015336
+=======
+		checkBGM.setFont(new Font("æ´ëŒ€â”", Font.BOLD, 13));
+>>>>>>> origin
 		checkBGM.setRequestFocusEnabled(false);
 		checkBGM.addChangeListener(new ChangeListener() {
 			@Override
@@ -217,9 +228,12 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 				if (checkBGM.isSelected() == true) {
 					usingBGM = true;
 <<<<<<< HEAD
+<<<<<<< HEAD
 				} else {
 					usingBGM = false;
 =======
+=======
+>>>>>>> origin
 					if(GameMusic.isAlive() && GameMusic != null) {
 						GameMusic.close();
 						GameMusic = new Music("GameMusic.mp3", true );
@@ -234,7 +248,10 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 						GameMusic.close();
 					}
 					
+<<<<<<< HEAD
 >>>>>>> 3748fd147596c04e6ef70dfe4e2546ba96015336
+=======
+>>>>>>> origin
 				}	
 				TetrisBoard.this.setRequestFocusEnabled(true);
 				TetrisBoard.this.repaint();
@@ -242,10 +259,14 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		});
 		
 <<<<<<< HEAD
+<<<<<<< HEAD
 		comboSpeed.setBounds(PANEL_WIDTH - BLOCK_SIZE * 13, 5, 45, 20); 			// ¼Óµµ ¼ýÀÚ Ç¥½Ã ¿ÞÂÊÀ¸·Î ÀÌµ¿.(millions)
 =======
 		comboSpeed.setBounds(PANEL_WIDTH - BLOCK_SIZE * 13, 5, 45, 20); 			// ï¿½ëƒ½ï¿½ë£„ ï¿½ë‹½ï¿½ì˜„ ï¿½ëª´ï¿½ë–† ï¿½ì‡Šï§ŸìŽŒì‘æ¿¡ï¿½ ï¿½ì” ï¿½ë£ž.(millions)
 >>>>>>> 3748fd147596c04e6ef70dfe4e2546ba96015336
+=======
+		comboSpeed.setBounds(PANEL_WIDTH - BLOCK_SIZE * 13, 5, 45, 20); 			// ï¿½ëƒ½ï¿½ë£„ ï¿½ë‹½ï¿½ì˜„ ï¿½ëª´ï¿½ë–† ï¿½ì‡Šï§ŸìŽŒì‘æ¿¡ï¿½ ï¿½ì” ï¿½ë£ž.(millions)
+>>>>>>> origin
 		this.add(comboSpeed);
 
 		this.add(systemMsg);
@@ -938,10 +959,14 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 				new Music("Space.mp3", false).start();	// millions
 			
 <<<<<<< HEAD
+<<<<<<< HEAD
 		} else if (e.getKeyCode() == Button.shift_key) {
 =======
 		} else if (e.getKeyCode() == Button.shift_key) {	// millions
 >>>>>>> 3748fd147596c04e6ef70dfe4e2546ba96015336
+=======
+		} else if (e.getKeyCode() == Button.shift_key) {	// millions
+>>>>>>> origin
 			playBlockHold();
 		}
 		this.showGhost();
