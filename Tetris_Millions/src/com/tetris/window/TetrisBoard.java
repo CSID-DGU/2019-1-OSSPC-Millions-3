@@ -51,7 +51,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	private GameClient client;
 
 	public static final int BLOCK_SIZE = 20;
-	public static final int BOARD_X = 140;
+	public static final int BOARD_X = 120;
 	public static final int BOARD_Y = 50;
 	private static int minX = 1, minY = 0, maxX = 10, maxY = 21, down = 50, up = 0;
 	private static final int MESSAGE_WIDTH = BLOCK_SIZE * 7;
@@ -344,20 +344,8 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 				g.setColor(Color.BLACK);
 				// 가운데
 				g.fillRect(3*BOARD_X+maxX*BLOCK_SIZE, BOARD_Y, maxX*BLOCK_SIZE, maxY*BLOCK_SIZE);
-				// 왼쪽
-				g.fillRect(2*BOARD_X+maxX*BLOCK_SIZE+BLOCK_SIZE*minX,BOARD_Y + BLOCK_SIZE, BLOCK_SIZE*5,BLOCK_SIZE*5);
-				// 오른쪽 위
-				g.fillRect(3*BOARD_X + 2*maxX*BLOCK_SIZE+BLOCK_SIZE*minX, BOARD_Y + BLOCK_SIZE, BLOCK_SIZE*5,BLOCK_SIZE*5);
-				// 오른쪽 아래
-				g.fillRect(3*BOARD_X + 2*maxX*BLOCK_SIZE+BLOCK_SIZE*minX, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*7, BLOCK_SIZE*5,BLOCK_SIZE*12);
-				
-				//HOLD  NEXT 출력
-				g.setFont(new Font(font.getFontName(),font.getStyle(),20));
-				g.setColor(Color.BLACK);
-				g.drawString("H O L D", 2*BOARD_X+maxX*BLOCK_SIZE+BLOCK_SIZE*minX + 15, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*5 + 20);
-				g.drawString("N E X T", 3*BOARD_X + 2*maxX*BLOCK_SIZE+ BLOCK_SIZE*minX + 15, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*5 + 20);
-				g.setFont(font);
-				
+			
+			
 		
 		//그리드 표시
 		if(usingGrid){
@@ -368,20 +356,6 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			// 가운데 세로줄
 			for(int i=1;i<maxX;i++) 
 				g.drawLine(3*BOARD_X+maxX*BLOCK_SIZE + BLOCK_SIZE*i, BOARD_Y, 3*BOARD_X+maxX*BLOCK_SIZE + BLOCK_SIZE*i, BOARD_Y + maxY*BLOCK_SIZE);
-			// 왼쪽 가로줄
-			for(int i=1;i<5;i++) 
-				g.drawLine(2*BOARD_X+maxX*BLOCK_SIZE+BLOCK_SIZE*minX, BOARD_Y + BLOCK_SIZE*(i+minX), 2*BOARD_X+maxX*BLOCK_SIZE+BLOCK_SIZE*(minX+5),BOARD_Y + BLOCK_SIZE*(i+minX));
-			// 왼쪽 세로줄
-			for(int i=1;i<5;i++) 
-				g.drawLine(2*BOARD_X+maxX*BLOCK_SIZE+BLOCK_SIZE*(i+minX),BOARD_Y + BLOCK_SIZE*minX, 2*BOARD_X+maxX*BLOCK_SIZE+BLOCK_SIZE*(i+minX),BOARD_Y + BLOCK_SIZE*(minX+5));
-			// 오른쪽 위 가로줄
-			for(int i=1;i<5;i++) 
-				g.drawLine(3*BOARD_X + 2*maxX*BLOCK_SIZE+BLOCK_SIZE*minX, BOARD_Y + BLOCK_SIZE*(i+minX), 
-						3*BOARD_X + 2*maxX*BLOCK_SIZE+BLOCK_SIZE*(minX+5), BOARD_Y + BLOCK_SIZE*(i+minX));
-			// 오른쪽 위 세로줄
-			for(int i=1;i<5;i++) 
-				g.drawLine(3*BOARD_X + 2*maxX*BLOCK_SIZE+BLOCK_SIZE*(i+minX), BOARD_Y + BLOCK_SIZE*minX, 
-						3*BOARD_X + 2*maxX*BLOCK_SIZE+BLOCK_SIZE*(i+minX), BOARD_Y + BLOCK_SIZE*(minX+5));	
 		}
 
 		int x = 0, y = 0, newY = 0;
@@ -975,7 +949,6 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 				GameMusic.close();
 			}
 			if (client != null) {
-				GameMusic.close();	// millions
 				if (tetris.isNetwork()) {
 					client.closeNetwork(tetris.isServer());
 				}
