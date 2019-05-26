@@ -176,15 +176,21 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 				TetrisBoard.this.repaint();
 			}
 		});
-		
+
 		checkEffect.setBounds(PANEL_WIDTH - BLOCK_SIZE * 7 + 35, 5, 95, 20);		//효과음 checkbox 위치 및 디자인(millions)
 		checkEffect.setBackground(new Color(255, 255, 255));
 		checkEffect.setForeground(Color.GRAY);
 		checkEffect.setFont(new Font("굴림", Font.BOLD, 13));
+		checkEffect.setRequestFocusEnabled(false);
 		checkEffect.addChangeListener(new ChangeListener() {
+			
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
-				//usingEffect = checkEffect.isSelected();
+				if (checkEffect.isSelected() == true) {
+					usingEffect = true;
+				} else {
+					usingEffect = false;
+				}		
 				TetrisBoard.this.setRequestFocusEnabled(true);
 				TetrisBoard.this.repaint();
 			}
@@ -194,15 +200,19 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		checkBGM.setBackground(new Color(255, 255, 255));
 		checkBGM.setForeground(Color.GRAY);
 		checkBGM.setFont(new Font("굴림", Font.BOLD, 13));
+		checkBGM.setRequestFocusEnabled(false);
 		checkBGM.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
-				//usingBGM = checkBGM.isSelected();
+				if (checkBGM.isSelected() == true) {
+					usingBGM = true;
+				} else {
+					usingBGM = false;
+				}	
 				TetrisBoard.this.setRequestFocusEnabled(true);
 				TetrisBoard.this.repaint();
 			}
 		});
-		
 		
 		comboSpeed.setBounds(PANEL_WIDTH - BLOCK_SIZE * 13, 5, 45, 20); 			// 속도 숫자 표시 왼쪽으로 이동.(millions)
 		this.add(comboSpeed);
@@ -450,15 +460,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			shap.setPosY(y);
 		}
 		
-		// 효과음 기능
-		if(usingEffect) {
-			
-		}
 		
-		// BGM 기능
-		if(usingBGM) {
-			
-		}
 	}
 
 	@Override
@@ -891,41 +893,40 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 
 	public void keyPressed(KeyEvent e) {
 		Button button = new Button();
-		if(e.getKeyCode() == KeyEvent.VK_ENTER){
+		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 			messageArea.requestFocus();
 		}
-		if(!isPlay) return;
-		if(e.getKeyCode() == button.left_key){
+		if (!isPlay)
+			return;
+		if (e.getKeyCode() == button.getLeft_key()) {
+			if (usingEffect)
+				new Music("Left.mp3", false).start(); // millions
 			controller.moveLeft();
 			controllerGhost.moveLeft();
-			new Music("Left.mp3", false).start();
-			
-		}else if(e.getKeyCode() == button.right_key){
+		} else if (e.getKeyCode() == button.right_key) {
+			if (usingEffect)
+				new Music("Right.mp3", false).start(); // millions
 			controller.moveRight();
 			controllerGhost.moveRight();
-			new Music("Right.mp3", false).start();
-
-
-		}else if(e.getKeyCode() == button.down_key){
+		} else if (e.getKeyCode() == button.down_key) {
+			if (usingEffect)
+				new Music("Down.mp3", false).start();	// millions
 			controller.moveDown();
-			new Music("Down.mp3", false).start();
-		
-
-		}else if(e.getKeyCode() == button.up_key){
+		} else if (e.getKeyCode() == button.up_key) {
+			if (usingEffect)
+				new Music("Rotation.mp3", false).start();	// millions
 			controller.nextRotationLeft();
 			controllerGhost.nextRotationLeft();
-			new Music("Rotation.mp3", false).start();
-		
-		}else if(e.getKeyCode() == button.space_key){
+		} else if (e.getKeyCode() == button.space_key) {
 			controller.moveQuickDown(shap.getPosY(), true);
 			this.fixingTetrisBlock();
-			new Music("Space.mp3", false).start();
 			
-		}else if(e.getKeyCode() == button.shift_key){ 
+			if (usingEffect)
+				new Music("Space.mp3", false).start();	// millions
+			
+		} else if (e.getKeyCode() == Button.shift_key) {
 			playBlockHold();
-			
 		}
-		
 		this.showGhost();
 		this.repaint();
 	}
@@ -952,12 +953,17 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			
 			if(GameMusic != null && GameMusic.isAlive()) {
 				GameMusic.close();
-				GameMusic = new Music("GameMusic.mp3", true );
-				GameMusic.start();
-				
+				if(usingBGM) {
+					GameMusic = new Music("GameMusic.mp3", true );
+					GameMusic.start();
+					
+					}
 			}else {
-				GameMusic = new Music("GameMusic.mp3", true );
-				GameMusic.start();
+				if(usingBGM) {
+					GameMusic = new Music("GameMusic.mp3", true );
+					GameMusic.start();
+					
+				}
 			}
 				
 			if(client!=null){
