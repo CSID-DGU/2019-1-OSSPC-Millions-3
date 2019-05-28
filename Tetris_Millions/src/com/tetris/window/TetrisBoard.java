@@ -87,6 +87,9 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	private TetrisController controller;
 	private TetrisController controllerGhost;
 
+	private TetrisBlock shap2;//HK
+	private ArrayList<Block> blockList2;//HK
+	
 	private boolean isPlay = false;
 	private boolean isHold = false;
 	private boolean usingGhost = true;
@@ -270,6 +273,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		map = new Block[maxY][maxX];
 		blockList = new ArrayList<Block>();
 		nextBlocks = new ArrayList<TetrisBlock>();
+		blockList2 = new ArrayList<Block>();
 
 		// 도형셋팅
 		shap = getRandomTetrisBlock();
@@ -433,8 +437,52 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			shap.setPosY(y);
 		}
 		
-		
+		try {
+			drawBlockShap(shap2, g);
+			drawBlockDeposit(blockList2,g);
+		}catch(NullPointerException e) {
+			e.printStackTrace();
+		} //repaint_drawBlock
 	}
+	/* 상대 블록 그리기 HK */
+	
+	public void drawBlockShap(TetrisBlock shap, Graphics g) {
+		if(shap != null) {
+			int x= 0, y = 0;
+			x = shap.getPosX();
+			y = shap.getPosY();
+			shap.setPosX(x+24);
+			shap.setPosY(y);
+			shap.drawBlock(g);
+			shap.setPosX(x);
+			shap.setPosY(y);
+		}
+	}
+	
+	public void drawBlockShap(TetrisBlock shap) {
+		drawBlockShap(shap, getGraphics());
+	}//drawBlockShap
+	
+	public void drawBlockDeposit(ArrayList<Block> blockList, Graphics g) {
+		if(blockList!=null){
+			
+			int x=0, y=0;
+			for(int i = 0 ; i<blockList.size() ; i++){
+				Block block = blockList.get(i);
+				x = block.getPosGridX();
+				y = block.getPosGridY();
+				block.setPosGridX(x+24);
+				block.setPosGridY(y);
+				block.drawColorBlock(g);
+				block.setPosGridX(x);
+				block.setPosGridY(y);
+			}
+		}
+	}
+	public void drawBlockDeposit(ArrayList<Block> blockList) {
+		drawBlockDeposit(blockList, getGraphics());
+	}//drawBlockDeposit
+	
 
 	@Override
 	public void run() {
@@ -457,7 +505,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 						this.fixingTetrisBlock();
 				}
 				this.repaint();
-				continue;
+	
 			}
 
 			countMove--;
@@ -900,6 +948,8 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		} else if (e.getKeyCode() == Button.shift_key) {
 			playBlockHold();
 		}
+		this.getClient().drawBlockShap(controller.getBlock());//HK
+		this.getClient().reDrawBlockDeposit(blockList);//HK
 		this.showGhost();
 		this.repaint();
 	}
@@ -958,7 +1008,9 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 
 		}
 	}
-	
+
+	public void setDeposit(ArrayList<Block> blockList2) {this.blockList2 = blockList2;}
+	public void setShap(TetrisBlock shap) {this.shap2 = shap;}
 
 	public boolean isPlay() {
 		return isPlay;

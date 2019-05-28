@@ -6,7 +6,10 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
+import com.tetris.classes.Block;
+import com.tetris.classes.TetrisBlock;
 import com.tetris.window.Tetris;
 import com.tetris.window.TetrisBoard;
 
@@ -16,7 +19,6 @@ public class GameClient implements Runnable{
 	private Socket socket;
 	private ObjectOutputStream oos;
 	private ObjectInputStream ois;
-	private TetrisBoard TetrisBoard;
 
 	//서버 IP
 	private String ip;
@@ -108,6 +110,17 @@ public class GameClient implements Runnable{
 			}else if(data.getCommand() == DataShip.GAME_WIN){
 				rePrintSystemMessage(data.getMsg()+"\nTOTAL ADD : "+data.getTotalAdd());
 				tetris.getBoard().setPlay(false);
+			}else if(data.getCommand() == DataShip.DRAW_BLOCK_SHAP) {		//HK
+				// 내가 보낸 요청이 아니었을 경우(상대방 플레이어의 블록이 이동한 경우) 화면에 그린다.
+				if(data.getPlayer() != this.index) {
+					reDrawBlockShap(data.getShap());
+					tetris.getBoard().setShap(data.getShap());
+				}
+			}else if(data.getCommand() == DataShip.DRAW_BLOCK_DEPOSIT) {		//HK
+				if(data.getPlayer() != this.index) {
+				reDrawBlockDeposit(data.getDeposit());
+				tetris.getBoard().setDeposit(data.getDeposit());
+				}
 			}
 			
 		}//while(true)
@@ -126,7 +139,37 @@ public class GameClient implements Runnable{
 		}
 	}//sendData()
 	
-	
+	//요청하기 : 상대블록 그리기 HK
+		public void drawBlockShap(TetrisBlock shap) {
+			DataShip data = new DataShip(DataShip.DRAW_BLOCK_SHAP);
+			data.setShap(shap);
+			data.setPlayer(index);
+			send(data);
+			try{
+				oos.reset(); //블록의 좌표를 업데이트한다.
+			}catch(IOException e){
+				e.printStackTrace();
+			}
+		}
+		public void reDrawBlockShap(TetrisBlock shap) {
+			tetris.getBoard().drawBlockShap(shap);
+		}//drawBlockShap HK
+		
+		public void drawBlockDeposit(ArrayList<Block> blockList2) {
+			DataShip data = new DataShip(DataShip.DRAW_BLOCK_DEPOSIT);
+			data.setDeposit(blockList2);
+			data.setPlayer(index);
+			send(data);
+			try{
+				oos.reset(); //블록의 좌표를 업데이트한다.
+			}catch(IOException e){
+				e.printStackTrace();
+			}
+		}
+		public void reDrawBlockDeposit(ArrayList<Block> blockList2) {
+			tetris.getBoard().drawBlockDeposit(blockList2);
+		}//drawBlockDeposit HK
+		
 	
 	
 	

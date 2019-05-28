@@ -31,7 +31,7 @@ public class TetrisController {
 		
 	}
 	
-	
+	public TetrisBlock getBlock() { return this.block;}//HK
 	/**
 	 * 움직일 테트리스 블럭을 넘겨준다.
 	 * @param block 움직일 테트리스 블럭
