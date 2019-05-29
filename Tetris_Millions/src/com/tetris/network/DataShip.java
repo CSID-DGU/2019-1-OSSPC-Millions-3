@@ -1,6 +1,10 @@
 package com.tetris.network;
 
-import java.io.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+
+import com.tetris.classes.Block;
+import com.tetris.classes.TetrisBlock;
 
 public class DataShip implements Serializable{
 	private static final long serialVersionUID = 1L;
@@ -17,6 +21,8 @@ public class DataShip implements Serializable{
 	public static final int PRINT_MESSAGE = 9;
 	public static final int PRINT_SYSTEM_MESSAGE=10;
 	public static final int GAME_WIN=11;
+	public static final int DRAW_BLOCK_SHAP=12;//HK
+	public static final int DRAW_BLOCK_DEPOSIT=13;//HK
 	
 	
 	private int cmd = -1;
@@ -29,6 +35,9 @@ public class DataShip implements Serializable{
 	private boolean isPlay;
 	private int totalAdd;
 	private int speed;
+	private TetrisBlock shap;//HK
+	private ArrayList<Block> blockList2;//HK
+	private int player = -1;// 플레이어를 구분하기 위한 변수 HK
 	
 	
 
@@ -36,6 +45,12 @@ public class DataShip implements Serializable{
 	public DataShip(int cmd){this.cmd = cmd;}
 
 	
+	public ArrayList<Block> getDeposit() {return blockList2;}//HK
+	public void setDeposit(ArrayList<Block> blockList2) {this.blockList2=blockList2;}//HK
+	public int getPlayer() {return player;}//HK
+	public void setPlayer(int player) {this.player = player;}//HK
+	public TetrisBlock getShap( ) {return shap; }//HK
+	public void setShap(TetrisBlock shap) {this.shap = shap;}//HK
 	public void setCommand(int type){this.cmd = type;};
 	public int getCommand(){return cmd;}
 	public String getName() {return name;}

@@ -33,8 +33,22 @@ public class Music extends Thread {
 		this.player.close();
 		this.interrupt();
 	}
+	public void Pause() {
+		synchronized(this) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 	
-	
+	public void restart() {
+		synchronized(this){
+			notify();
+		}
+	}
 	@Override
 	public void run() {
 		try {

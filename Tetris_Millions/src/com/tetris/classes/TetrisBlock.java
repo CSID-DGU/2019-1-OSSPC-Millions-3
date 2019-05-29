@@ -2,9 +2,12 @@ package com.tetris.classes;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.io.Serializable;
 
 //테트리스 블럭
-public abstract class TetrisBlock {
+public abstract class TetrisBlock implements Serializable {
+	private static final long serialVersionUID = 1L;
+	
 	/* TetrisBlock Type*/
 	public static final int TYPE_CENTERUP = 0 ;
 	public static final int TYPE_LEFTTWOUP = 1 ;

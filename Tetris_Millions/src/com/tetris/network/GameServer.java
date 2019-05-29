@@ -7,6 +7,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import com.tetris.classes.Block;
+import com.tetris.classes.TetrisBlock;
+
 //TODO:--------------------------[ 핸들러 ]--------------------------
 class GameHandler extends Thread{
 	private static boolean isStartGame;
@@ -87,6 +90,12 @@ class GameHandler extends Thread{
 			}else if(data.getCommand()==DataShip.PRINT_SYSTEM_MESSAGE){
 				printSystemMessage(data.getMsg());
 			}
+			//클라이언트로부터 블록의 정보와, 요청한 클라이언트의 index 값을 player변수로 받아온다. HK
+			else if(data.getCommand() == DataShip.DRAW_BLOCK_SHAP) {		//HK
+					drawBlockShap(data.getShap(), data.getPlayer());
+			}else if(data.getCommand() == DataShip.DRAW_BLOCK_DEPOSIT) {		//HK
+					drawBlockDeposit(data.getDeposit(), data.getPlayer());
+			}
 			
 		}//while(true)
 		
@@ -100,6 +109,32 @@ class GameHandler extends Thread{
 		}
 		
 	}//run
+	
+	//응답하기 : 상대블록 그리기 HK
+		//요청받은 정보를 고대로 broadcasting한다.
+		public void drawBlockShap(TetrisBlock shap) {
+			DataShip data = new DataShip(DataShip.DRAW_BLOCK_SHAP);
+			data.setShap(shap);
+			broadcast(data);
+		}
+		public void drawBlockShap(TetrisBlock shap, int player) {
+			DataShip data = new DataShip(DataShip.DRAW_BLOCK_SHAP);
+			data.setShap(shap);
+			data.setPlayer(player);
+			broadcast(data);
+		}//drawBlockShap
+		public void drawBlockDeposit(ArrayList<Block> blockList2) {
+			DataShip data = new DataShip(DataShip.DRAW_BLOCK_DEPOSIT);
+			data.setDeposit(blockList2);
+			broadcast(data);
+		}
+		public void drawBlockDeposit(ArrayList<Block> blockList2, int player) {
+			DataShip data = new DataShip(DataShip.DRAW_BLOCK_DEPOSIT);
+			data.setDeposit(blockList2);
+			data.setPlayer(player);
+			broadcast(data);
+		}
+		
 	
 	public void printMessage(String msg) {
 		DataShip data = new DataShip(DataShip.PRINT_MESSAGE);

@@ -6,9 +6,21 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+
+import com.tetris.classes.Block;
+import com.tetris.classes.TetrisBlock;
+import com.tetris.main.Music;
+import com.tetris.main.TetrisMain;
+import com.tetris.window.Sound;
 import com.tetris.window.Tetris;
-import com.tetris.window.TetrisBoard;
+import static com.tetris.window.Sound.GameMusic;
+import static com.tetris.window.Sound.GameEndSound;
+import static com.tetris.window.TetrisBoard.usingBGM;
+
 
 //---------------------[ 클라이언트 ]---------------------
 public class GameClient implements Runnable{
@@ -16,7 +28,8 @@ public class GameClient implements Runnable{
 	private Socket socket;
 	private ObjectOutputStream oos;
 	private ObjectInputStream ois;
-	private TetrisBoard TetrisBoard;
+	
+	private Sound sound;
 
 	//서버 IP
 	private String ip;
@@ -24,6 +37,7 @@ public class GameClient implements Runnable{
 	private String name;
 	private int index;
 	private boolean isPlay;
+	
 	
 	//생성자
 	public GameClient(Tetris tetris,String ip, int port, String name){
@@ -108,6 +122,17 @@ public class GameClient implements Runnable{
 			}else if(data.getCommand() == DataShip.GAME_WIN){
 				rePrintSystemMessage(data.getMsg()+"\nTOTAL ADD : "+data.getTotalAdd());
 				tetris.getBoard().setPlay(false);
+			}else if(data.getCommand() == DataShip.DRAW_BLOCK_SHAP) {		//HK
+				// 내가 보낸 요청이 아니었을 경우(상대방 플레이어의 블록이 이동한 경우) 화면에 그린다.
+				if(data.getPlayer() != this.index) {
+					reDrawBlockShap(data.getShap());
+					tetris.getBoard().setShap(data.getShap());
+				}
+			}else if(data.getCommand() == DataShip.DRAW_BLOCK_DEPOSIT) {		//HK
+				if(data.getPlayer() != this.index) {
+				reDrawBlockDeposit(data.getDeposit());
+				tetris.getBoard().setDeposit(data.getDeposit());
+				}
 			}
 			
 		}//while(true)
@@ -126,7 +151,38 @@ public class GameClient implements Runnable{
 		}
 	}//sendData()
 	
-	
+	//요청하기 : 상대블록 그리기 HK
+		public void drawBlockShap(TetrisBlock shap) {
+			
+			DataShip data = new DataShip(DataShip.DRAW_BLOCK_SHAP);
+			data.setShap(shap);
+			data.setPlayer(index);
+			send(data);
+			try{
+				oos.reset(); //블록의 좌표를 업데이트한다.
+			}catch(IOException e){
+				e.printStackTrace();
+			}
+		}
+		public void reDrawBlockShap(TetrisBlock shap) {
+			tetris.getBoard().drawBlockShap(shap);
+		}//drawBlockShap HK
+		
+		public void drawBlockDeposit(ArrayList<Block> blockList2) {
+			DataShip data = new DataShip(DataShip.DRAW_BLOCK_DEPOSIT);
+			data.setDeposit(blockList2);
+			data.setPlayer(index);
+			send(data);
+			try{
+				oos.reset(); //블록의 좌표를 업데이트한다.
+			}catch(IOException e){
+				e.printStackTrace();
+			}
+		}
+		public void reDrawBlockDeposit(ArrayList<Block> blockList2) {
+			tetris.getBoard().drawBlockDeposit(blockList2);
+		}//drawBlockDeposit HK
+		
 	
 	
 	
@@ -139,6 +195,9 @@ public class GameClient implements Runnable{
 	//실행하기 : 연결끊기
 	public void reCloseNetwork(){
 
+		if(GameMusic != null && GameMusic.isAlive()) {
+			GameMusic.close();
+		}
 		tetris.closeNetwork();
 		try {
 			ois.close();
@@ -160,6 +219,22 @@ public class GameClient implements Runnable{
 		this.isPlay = isPlay;
 		tetris.gameStart(speed);
 		rePrintSystemMessage(msg);
+		//this.sound.GameMusicStart();
+		if(GameMusic != null && GameMusic.isAlive()) {
+			GameMusic.close();
+			if(usingBGM) {
+				GameMusic = new Music("GameMusic.mp3", true );
+				GameMusic.start();
+				
+				}
+		}else {
+			if(usingBGM) {
+				GameMusic = new Music("GameMusic.mp3", true );
+				GameMusic.start();
+				
+			}
+		}
+		
 	}
 	//요청하기 : 메시지
 	public void printSystemMessage(int cmd){
@@ -193,8 +268,14 @@ public class GameClient implements Runnable{
 	public void gameover(){
 		DataShip data = new DataShip(DataShip.GAME_OVER);
 		send(data);
-		TetrisBoard.GameEndPopUp();
-		TetrisBoard.GameMusic.close();
+		if(GameMusic != null && GameMusic.isAlive()) {
+			GameMusic.close();
+		}
+		GameEndSound = new Music("GameOver.mp3", false); 
+		GameEndSound.start();	
+		ImageIcon popupicon = new ImageIcon(TetrisMain.class.getResource("../../../Images/GAMEOVER.PNG"));
+		JOptionPane.showMessageDialog(null, null, "The End", JOptionPane.ERROR_MESSAGE, popupicon);
+		//sound.GameOver();
 	}
 	public void reGameover(String msg, int totalAdd){
 		tetris.printSystemMessage(msg);

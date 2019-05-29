@@ -6,6 +6,8 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;	// millions
 import java.awt.event.KeyListener;
@@ -41,6 +43,11 @@ import com.tetris.shape.Nemo;
 import com.tetris.shape.RightTwoUp;
 import com.tetris.shape.RightUp;
 import com.tetris.window.Button;
+import com.tetris.window.Sound;
+
+import static com.tetris.window.Sound.GameMusic;
+import static com.tetris.window.TetrisBoard.usingBGM;
+import static com.tetris.window.Sound.GameEndSound;
 
 public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseListener, ActionListener {
 	private static final long serialVersionUID = 1L;
@@ -49,7 +56,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	private GameClient client;
 
 	public static final int BLOCK_SIZE = 20;
-	public static final int BOARD_X = 140;
+	public static final int BOARD_X = 120;
 	public static final int BOARD_Y = 50;
 	private static int minX = 1, minY = 0, maxX = 10, maxY = 21, down = 50, up = 0;
 	private static final int MESSAGE_WIDTH = BLOCK_SIZE * 7;
@@ -85,22 +92,23 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	private TetrisController controller;
 	private TetrisController controllerGhost;
 
+	private TetrisBlock shap2;//HK
+	private ArrayList<Block> blockList2;//HK
+	
 	private boolean isPlay = false;
 	private boolean isHold = false;
 	private boolean usingGhost = true;
 	private boolean usingGrid = true;
 	
 	
-	private boolean usingEffect = true;							// 효과음 (millions)
-	private boolean usingBGM = true;							// 배경음악 (millions)
+	public static boolean usingEffect = true;							// 효과음 (millions)
+	public static boolean usingBGM = true;							// 배경음악 (millions)
 	
 	
 	private int removeLineCount = 0;
 	private int removeLineCombo = 0;
 	
-	//Music 객체 millions
-	public Music GameMusic; // 게임하는 도중의 음악
-	public Music GameEndSound;// 게임 종료 시 효과음
+	public Sound Sound;
 
 
 	public TetrisBoard(Tetris tetris, GameClient client) {
@@ -111,7 +119,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		this.addMouseListener(this);
 		this.setLayout(null);
 		this.setFocusable(true);
-
+		Sound = new Sound();
 		btnStart.setBounds(PANEL_WIDTH - BLOCK_SIZE * 7, PANEL_HEIGHT - messageArea.getHeight(), BLOCK_SIZE * 7,
 				messageArea.getHeight() / 2);
 		btnStart.setFocusable(false);
@@ -182,10 +190,10 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		checkEffect.setForeground(Color.GRAY);
 		checkEffect.setFont(new Font("굴림", Font.BOLD, 13));
 		checkEffect.setRequestFocusEnabled(false);
-		checkEffect.addChangeListener(new ChangeListener() {
+		checkEffect.addActionListener(new ActionListener() {
 			
 			@Override
-			public void stateChanged(ChangeEvent arg0) {
+			public void actionPerformed(ActionEvent e) {
 				if (checkEffect.isSelected() == true) {
 					usingEffect = true;
 				} else {
@@ -201,13 +209,26 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		checkBGM.setForeground(Color.GRAY);
 		checkBGM.setFont(new Font("굴림", Font.BOLD, 13));
 		checkBGM.setRequestFocusEnabled(false);
-		checkBGM.addChangeListener(new ChangeListener() {
+		checkBGM.addActionListener(new ActionListener() {
 			@Override
-			public void stateChanged(ChangeEvent arg0) {
+			public void actionPerformed(ActionEvent e) {
 				if (checkBGM.isSelected() == true) {
+
 					usingBGM = true;
+					if(GameMusic.isAlive() && GameMusic != null) {
+						GameMusic.close();
+						GameMusic = new Music("GameMusic.mp3", true );
+						GameMusic.start();
+					}else {
+						GameMusic = new Music("GameMusic.mp3", true );
+						GameMusic.start();
+					}
 				} else {
 					usingBGM = false;
+					if(GameMusic != null && GameMusic.isAlive()) {
+						GameMusic.close();
+					}
+					
 				}	
 				TetrisBoard.this.setRequestFocusEnabled(true);
 				TetrisBoard.this.repaint();
@@ -255,6 +276,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		map = new Block[maxY][maxX];
 		blockList = new ArrayList<Block>();
 		nextBlocks = new ArrayList<TetrisBlock>();
+		blockList2 = new ArrayList<Block>();
 
 		// 도형셋팅
 		shap = getRandomTetrisBlock();
@@ -298,91 +320,49 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		g.drawString("속도", PANEL_WIDTH - BLOCK_SIZE * 15, 20);
 		g.setFont(font);
 
-		g.setColor(Color.lightGray);
-		g.fillRect(BOARD_X, BOARD_Y, maxX*BLOCK_SIZE, maxY*BLOCK_SIZE);
-		// 왼쪽
+		g.setColor(Color.BLACK);
+		g.fillRect(BOARD_X + BLOCK_SIZE*minX, BOARD_Y, maxX*BLOCK_SIZE+1, maxY*BLOCK_SIZE+1);
 		g.fillRect(BLOCK_SIZE*minX ,BOARD_Y + BLOCK_SIZE, BLOCK_SIZE*5,BLOCK_SIZE*5);
-		// 오른쪽 위
-		g.fillRect(BOARD_X + maxX*BLOCK_SIZE+ BLOCK_SIZE*minX, BOARD_Y + BLOCK_SIZE, BLOCK_SIZE*5,BLOCK_SIZE*5);
-		// 오른쪽 아래
-		g.fillRect(BOARD_X + maxX*BLOCK_SIZE + BLOCK_SIZE*minX, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*7, BLOCK_SIZE*5,BLOCK_SIZE*12);
-
-		// HOLD NEXT 출력
-		g.setFont(new Font(font.getFontName(), font.getStyle(), 20));
-		g.drawString("H O L D", BLOCK_SIZE*minX + 15, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*5 + 20);
-		g.drawString("N E X T", BOARD_X + maxX*BLOCK_SIZE+ BLOCK_SIZE*minX + 15, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*5 + 20);
-		g.setFont(font);
-
-		// 그리드 표시
-		if (usingGrid) {
-			g.setColor(Color.WHITE);
-			for(int i=1;i<maxY;i++) 
-				g.drawLine(BOARD_X, BOARD_Y+BLOCK_SIZE*i, BOARD_X + maxX*BLOCK_SIZE, BOARD_Y + BLOCK_SIZE*i);
-			// 가운데 세로줄
-			for(int i=1;i<maxX;i++) 
-				g.drawLine(BOARD_X + BLOCK_SIZE*i, BOARD_Y, BOARD_X + BLOCK_SIZE*i, BOARD_Y + maxY*BLOCK_SIZE);
-			// 왼쪽 가로줄
-			for(int i=1;i<5;i++) 
-				g.drawLine(BLOCK_SIZE*minX ,BOARD_Y + BLOCK_SIZE*(i+minX), BLOCK_SIZE*(minX+5),BOARD_Y + BLOCK_SIZE*(i+minX));
-			// 왼쪽 세로줄
-			for(int i=1;i<5;i++) 
-				g.drawLine(BLOCK_SIZE*(i+minX) ,BOARD_Y + BLOCK_SIZE*minX, BLOCK_SIZE*(i+minX),BOARD_Y + BLOCK_SIZE*(minX+5));
-			// 오른쪽 위 가로줄
-			for(int i=1;i<5;i++) 
-				g.drawLine(BOARD_X + BLOCK_SIZE*minX + maxX*BLOCK_SIZE, BOARD_Y + BLOCK_SIZE*(i+minX), 
-						BOARD_X + maxX*BLOCK_SIZE + BLOCK_SIZE*(minX+5), BOARD_Y + BLOCK_SIZE*(i+minX));
-			// 오른쪽 위 세로줄
-			for(int i=1;i<5;i++) 
-				g.drawLine(BOARD_X + maxX*BLOCK_SIZE + BLOCK_SIZE*(i+minX), BOARD_Y + BLOCK_SIZE*minX, 
-						BOARD_X + maxX*BLOCK_SIZE + BLOCK_SIZE*(i+minX), BOARD_Y + BLOCK_SIZE*(minX+5));	
+		g.fillRect(BOARD_X + BLOCK_SIZE*minX + (maxX+1)*BLOCK_SIZE+1,BOARD_Y + BLOCK_SIZE, BLOCK_SIZE*5,BLOCK_SIZE*5);
+		g.fillRect(BOARD_X + BLOCK_SIZE*minX + (maxX+1)*BLOCK_SIZE+1,BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*7, BLOCK_SIZE*5,BLOCK_SIZE*12);
 		
+		//HOLD  NEXT 출력
+		g.setFont(new Font(font.getFontName(),font.getStyle(),20));
+		g.drawString("H O L D", BLOCK_SIZE + 12, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*5 + 20);
+		g.drawString("N E X T", BOARD_X + BLOCK_SIZE + (maxX+1)*BLOCK_SIZE+1 + 12, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*5 + 20);
+		g.setFont(font);
+		
+		//그리드 표시
+		if(usingGrid){
+			g.setColor(Color.darkGray);
+			for(int i=1;i<maxY;i++) g.drawLine(BOARD_X + BLOCK_SIZE*minX, BOARD_Y+BLOCK_SIZE*(i+minY), BOARD_X + (maxX+minX)*BLOCK_SIZE, BOARD_Y+BLOCK_SIZE*(i+minY));
+			for(int i=1;i<maxX;i++) g.drawLine(BOARD_X + BLOCK_SIZE*(i+minX), BOARD_Y+BLOCK_SIZE*minY, BOARD_X + BLOCK_SIZE*(i+minX), BOARD_Y+BLOCK_SIZE*(minY+maxY));
+			for(int i=1;i<5;i++) g.drawLine(BLOCK_SIZE*minX ,BOARD_Y + BLOCK_SIZE*(i+1), BLOCK_SIZE*(minX+5)-1,BOARD_Y + BLOCK_SIZE*(i+1));
+			for(int i=1;i<5;i++) g.drawLine(BLOCK_SIZE*(minY+i+1) ,BOARD_Y + BLOCK_SIZE, BLOCK_SIZE*(minY+i+1),BOARD_Y + BLOCK_SIZE*(minY+6)-1);
+			for(int i=1;i<5;i++) g.drawLine(BOARD_X + BLOCK_SIZE*minX + (maxX+1)*BLOCK_SIZE+1, BOARD_Y + BLOCK_SIZE*(i+1), BOARD_X + BLOCK_SIZE*minX + (maxX+1)*BLOCK_SIZE+BLOCK_SIZE*5,BOARD_Y + BLOCK_SIZE*(i+1));
+			for(int i=1;i<5;i++) g.drawLine(BOARD_X + BLOCK_SIZE*minX + (maxX+1+i)*BLOCK_SIZE+1, BOARD_Y + BLOCK_SIZE, BOARD_X + BLOCK_SIZE*minX + BLOCK_SIZE+BLOCK_SIZE*(10+i)+1,BOARD_Y + BLOCK_SIZE*6-1);	
 		}
 		
-		g.drawLine(this.getWidth()/2, BOARD_Y, this.getWidth()/2, BOARD_Y+maxY*BLOCK_SIZE);
+		
+		g.drawLine(this.getWidth()/2 + 10 , BOARD_Y, this.getWidth()/2 + 10, BOARD_Y+maxY*BLOCK_SIZE);
 		
 		// <<2p 화면>>
 				// 까만 배경 부분
 				g.setColor(Color.BLACK);
 				// 가운데
-				g.fillRect(3*BOARD_X+maxX*BLOCK_SIZE, BOARD_Y, maxX*BLOCK_SIZE, maxY*BLOCK_SIZE);
-				// 왼쪽
-				g.fillRect(2*BOARD_X+maxX*BLOCK_SIZE+BLOCK_SIZE*minX,BOARD_Y + BLOCK_SIZE, BLOCK_SIZE*5,BLOCK_SIZE*5);
-				// 오른쪽 위
-				g.fillRect(3*BOARD_X + 2*maxX*BLOCK_SIZE+BLOCK_SIZE*minX, BOARD_Y + BLOCK_SIZE, BLOCK_SIZE*5,BLOCK_SIZE*5);
-				// 오른쪽 아래
-				g.fillRect(3*BOARD_X + 2*maxX*BLOCK_SIZE+BLOCK_SIZE*minX, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*7, BLOCK_SIZE*5,BLOCK_SIZE*12);
-				
-				//HOLD  NEXT 출력
-				g.setFont(new Font(font.getFontName(),font.getStyle(),20));
-				g.setColor(Color.BLACK);
-				g.drawString("H O L D", 2*BOARD_X+maxX*BLOCK_SIZE+BLOCK_SIZE*minX + 15, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*5 + 20);
-				g.drawString("N E X T", 3*BOARD_X + 2*maxX*BLOCK_SIZE+ BLOCK_SIZE*minX + 15, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*5 + 20);
-				g.setFont(font);
-				
+				g.fillRect(3*BOARD_X+maxX*BLOCK_SIZE +(2*BLOCK_SIZE), BOARD_Y, maxX*BLOCK_SIZE+1, maxY*BLOCK_SIZE);
+			
+			
 		
 		//그리드 표시
 		if(usingGrid){
 			g.setColor(Color.darkGray);
 			// 가운데 가로줄
 			for(int i=1;i<maxY;i++) 
-				g.drawLine(3*BOARD_X+maxX*BLOCK_SIZE, BOARD_Y+BLOCK_SIZE*i, 3*BOARD_X + 2*maxX*BLOCK_SIZE, BOARD_Y + BLOCK_SIZE*i);
+				g.drawLine(3*BOARD_X+maxX*BLOCK_SIZE+(2*BLOCK_SIZE), BOARD_Y+BLOCK_SIZE*i, 3*BOARD_X + 2*maxX*BLOCK_SIZE+(2*BLOCK_SIZE),BOARD_Y + BLOCK_SIZE*i);
 			// 가운데 세로줄
 			for(int i=1;i<maxX;i++) 
-				g.drawLine(3*BOARD_X+maxX*BLOCK_SIZE + BLOCK_SIZE*i, BOARD_Y, 3*BOARD_X+maxX*BLOCK_SIZE + BLOCK_SIZE*i, BOARD_Y + maxY*BLOCK_SIZE);
-			// 왼쪽 가로줄
-			for(int i=1;i<5;i++) 
-				g.drawLine(2*BOARD_X+maxX*BLOCK_SIZE+BLOCK_SIZE*minX, BOARD_Y + BLOCK_SIZE*(i+minX), 2*BOARD_X+maxX*BLOCK_SIZE+BLOCK_SIZE*(minX+5),BOARD_Y + BLOCK_SIZE*(i+minX));
-			// 왼쪽 세로줄
-			for(int i=1;i<5;i++) 
-				g.drawLine(2*BOARD_X+maxX*BLOCK_SIZE+BLOCK_SIZE*(i+minX),BOARD_Y + BLOCK_SIZE*minX, 2*BOARD_X+maxX*BLOCK_SIZE+BLOCK_SIZE*(i+minX),BOARD_Y + BLOCK_SIZE*(minX+5));
-			// 오른쪽 위 가로줄
-			for(int i=1;i<5;i++) 
-				g.drawLine(3*BOARD_X + 2*maxX*BLOCK_SIZE+BLOCK_SIZE*minX, BOARD_Y + BLOCK_SIZE*(i+minX), 
-						3*BOARD_X + 2*maxX*BLOCK_SIZE+BLOCK_SIZE*(minX+5), BOARD_Y + BLOCK_SIZE*(i+minX));
-			// 오른쪽 위 세로줄
-			for(int i=1;i<5;i++) 
-				g.drawLine(3*BOARD_X + 2*maxX*BLOCK_SIZE+BLOCK_SIZE*(i+minX), BOARD_Y + BLOCK_SIZE*minX, 
-						3*BOARD_X + 2*maxX*BLOCK_SIZE+BLOCK_SIZE*(i+minX), BOARD_Y + BLOCK_SIZE*(minX+5));	
+				g.drawLine(3*BOARD_X+maxX*BLOCK_SIZE+ BLOCK_SIZE*i+(2*BLOCK_SIZE), BOARD_Y, 3*BOARD_X+maxX*BLOCK_SIZE + BLOCK_SIZE*i+(2*BLOCK_SIZE), BOARD_Y + maxY*BLOCK_SIZE);
 		}
 
 		int x = 0, y = 0, newY = 0;
@@ -460,8 +440,52 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			shap.setPosY(y);
 		}
 		
-		
+		try {
+			drawBlockShap(shap2, g);
+			drawBlockDeposit(blockList2,g);
+		}catch(NullPointerException e) {
+			e.printStackTrace();
+		} //repaint_drawBlock
 	}
+	/* 상대 블록 그리기 HK */
+	
+	public void drawBlockShap(TetrisBlock shap, Graphics g) {
+		if(shap != null) {
+			int x= 0, y = 0;
+			x = shap.getPosX();
+			y = shap.getPosY();
+			shap.setPosX(x+24);
+			shap.setPosY(y);
+			shap.drawBlock(g);
+			shap.setPosX(x);
+			shap.setPosY(y);
+		}
+	}
+	
+	public void drawBlockShap(TetrisBlock shap) {
+		drawBlockShap(shap, getGraphics());
+	}//drawBlockShap
+	
+	public void drawBlockDeposit(ArrayList<Block> blockList, Graphics g) {
+		if(blockList!=null){
+			
+			int x=0, y=0;
+			for(int i = 0 ; i<blockList.size() ; i++){
+				Block block = blockList.get(i);
+				x = block.getPosGridX();
+				y = block.getPosGridY();
+				block.setPosGridX(x+24);
+				block.setPosGridY(y);
+				block.drawColorBlock(g);
+				block.setPosGridX(x);
+				block.setPosGridY(y);
+			}
+		}
+	}
+	public void drawBlockDeposit(ArrayList<Block> blockList) {
+		drawBlockDeposit(blockList, getGraphics());
+	}//drawBlockDeposit
+	
 
 	@Override
 	public void run() {
@@ -484,7 +508,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 						this.fixingTetrisBlock();
 				}
 				this.repaint();
-				continue;
+	
 			}
 
 			countMove--;
@@ -641,8 +665,6 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			// 줄이 꽉 찼을 경우. 게임을 종료한다.
 			if (mainBlock.getY() == 1 && mainBlock.getX() > 2 && mainBlock.getX() < 7) {
 				this.gameEndCallBack();
-				GameMusic.close(); // 게임음악 종료
-				GameEndPopUp(); // 게임 종료 시 팝업 이벤트 발생 , millions
 				break;
 			}
 
@@ -706,11 +728,18 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	public void gameEndCallBack() {
 		client.gameover();
 		this.isPlay = false;
+		if(GameMusic != null && GameMusic.isAlive()) {
+			GameMusic.close();
+		}
+		GameEndSound = new Music("GameOver.mp3", false); 
+		GameEndSound.start();	
+		ImageIcon popupicon = new ImageIcon(TetrisMain.class.getResource("../../../Images/GAMEOVER.PNG"));
+		JOptionPane.showMessageDialog(null, null, "The End", JOptionPane.ERROR_MESSAGE, popupicon);
 	}
 
 	/**
 	 * 고스트블럭을 보여준다.
-	 */
+	 */ 
 	private void showGhost() {
 		ghost = getBlockClone(shap, true);
 		controllerGhost.setBlock(ghost);
@@ -876,15 +905,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			this.notify();
 		}
 	}
-	// popup 이벤트 함수 , millions
-	public void GameEndPopUp() {  
-		GameEndSound = new Music("GameOver.mp3", false); 
-		GameEndSound.start();	
-		ImageIcon popupicon = new ImageIcon(TetrisMain.class.getResource("../../../Images/GAMEOVER.PNG"));
-		JOptionPane.showMessageDialog(null, null, "The End", JOptionPane.ERROR_MESSAGE, popupicon);
-	}
-
-
+	
 	public void keyReleased(KeyEvent e) {
 	}
 
@@ -925,10 +946,11 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 				new Music("Space.mp3", false).start();	// millions
 			
 		} else if (e.getKeyCode() == Button.shift_key) {
-			if (usingEffect)
-				new Music("ShiftSound.mp3", false).start();		// millions
 			playBlockHold();
 		}
+
+		this.getClient().drawBlockShap(controller.getBlock());//HK
+		this.getClient().drawBlockDeposit(blockList);//HK
 		this.showGhost();
 		this.repaint();
 	}
@@ -953,6 +975,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btnStart) {
 			
+			
 			if(GameMusic != null && GameMusic.isAlive()) {
 				GameMusic.close();
 				if(usingBGM) {
@@ -967,6 +990,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 					
 				}
 			}
+			//Sound.GameMusicStart();
 				
 			if(client!=null){
 				client.gameStart((int)comboSpeed.getSelectedItem());
@@ -974,11 +998,13 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 				this.gameStart((int)comboSpeed.getSelectedItem());
 			}
 		}else if(e.getSource() == btnExit){
+			
+			//Sound.GameExit();
 			if(GameMusic != null && GameMusic.isAlive()) {
 				GameMusic.close();
 			}
+			
 			if (client != null) {
-				GameMusic.close();	// millions
 				if (tetris.isNetwork()) {
 					client.closeNetwork(tetris.isServer());
 				}
@@ -988,7 +1014,9 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 
 		}
 	}
-	
+
+	public void setDeposit(ArrayList<Block> blockList2) {this.blockList2 = blockList2;}
+	public void setShap(TetrisBlock shap) {this.shap2 = shap;}
 
 	public boolean isPlay() {
 		return isPlay;
