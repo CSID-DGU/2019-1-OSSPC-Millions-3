@@ -46,6 +46,7 @@ import com.tetris.window.Button;
 import com.tetris.window.Sound;
 
 import static com.tetris.window.Sound.GameMusic;
+import static com.tetris.window.Sound.GameEndSound;
 
 public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseListener, ActionListener {
 	private static final long serialVersionUID = 1L;
@@ -726,6 +727,13 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	public void gameEndCallBack() {
 		client.gameover();
 		this.isPlay = false;
+		if(GameMusic != null && GameMusic.isAlive()) {
+			GameMusic.close();
+		}
+		GameEndSound = new Music("GameOver.mp3", false); 
+		GameEndSound.start();	
+		ImageIcon popupicon = new ImageIcon(TetrisMain.class.getResource("../../../Images/GAMEOVER.PNG"));
+		JOptionPane.showMessageDialog(null, null, "The End", JOptionPane.ERROR_MESSAGE, popupicon);
 	}
 
 	/**

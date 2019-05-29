@@ -8,10 +8,18 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+
 import com.tetris.classes.Block;
 import com.tetris.classes.TetrisBlock;
+import com.tetris.main.Music;
+import com.tetris.main.TetrisMain;
 import com.tetris.window.Sound;
 import com.tetris.window.Tetris;
+import static com.tetris.window.Sound.GameMusic;
+import static com.tetris.window.Sound.GameEndSound;
+import static com.tetris.window.TetrisBoard.usingBGM;
 
 
 //---------------------[ 클라이언트 ]---------------------
@@ -183,6 +191,9 @@ public class GameClient implements Runnable{
 		DataShip data = new DataShip(DataShip.CLOSE_NETWORK);
 		if(isServer) data.setCommand(DataShip.SERVER_EXIT);
 		send(data);
+		if(GameMusic != null && GameMusic.isAlive()) {
+			GameMusic.close();
+		}
 	}
 	//실행하기 : 연결끊기
 	public void reCloseNetwork(){
@@ -209,6 +220,20 @@ public class GameClient implements Runnable{
 		tetris.gameStart(speed);
 		rePrintSystemMessage(msg);
 		//this.sound.GameMusicStart();
+		if(GameMusic != null && GameMusic.isAlive()) {
+			GameMusic.close();
+			if(usingBGM) {
+				GameMusic = new Music("GameMusic.mp3", true );
+				GameMusic.start();
+				
+				}
+		}else {
+			if(usingBGM) {
+				GameMusic = new Music("GameMusic.mp3", true );
+				GameMusic.start();
+				
+			}
+		}
 		
 	}
 	//요청하기 : 메시지
@@ -244,6 +269,14 @@ public class GameClient implements Runnable{
 		DataShip data = new DataShip(DataShip.GAME_OVER);
 		send(data);
 		//sound.GameOver();
+		if(GameMusic != null && GameMusic.isAlive()) {
+			GameMusic.close();
+		}
+		GameEndSound = new Music("GameOver.mp3", false); 
+		GameEndSound.start();	
+		ImageIcon popupicon = new ImageIcon(TetrisMain.class.getResource("../../../Images/GAMEOVER.PNG"));
+		JOptionPane.showMessageDialog(null, null, "The End", JOptionPane.ERROR_MESSAGE, popupicon);
+
 	}
 	public void reGameover(String msg, int totalAdd){
 		tetris.printSystemMessage(msg);
