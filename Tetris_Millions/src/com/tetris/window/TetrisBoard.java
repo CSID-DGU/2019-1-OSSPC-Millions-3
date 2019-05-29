@@ -939,10 +939,9 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		} else if (e.getKeyCode() == Button.shift_key) {
 			playBlockHold();
 		}
-		/*if(client != null) {
-			this.getClient().drawBlockShap(controller.getBlock());//HK
-			this.getClient().drawBlockDeposit(blockList);//HK
-		}*/
+
+		this.getClient().drawBlockShap(controller.getBlock());//HK
+		this.getClient().drawBlockDeposit(blockList);//HK
 		this.showGhost();
 		this.repaint();
 	}

@@ -1,10 +1,12 @@
 package com.tetris.shape;
 
 import java.awt.Color;
+import java.io.Serializable;
 
 import com.tetris.classes.TetrisBlock;
 
-public class RightTwoUp extends TetrisBlock {
+public class RightTwoUp extends TetrisBlock implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	public RightTwoUp(int x, int y) {
 		super(x, y, new Color(89,218,80), new Color(255,255,255));

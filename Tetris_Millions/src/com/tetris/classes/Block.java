@@ -2,10 +2,13 @@ package com.tetris.classes;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.io.Serializable;
 
 import com.tetris.window.TetrisBoard;
 
-public class Block {
+public class Block implements Serializable {
+	private static final long serialVersionUID = 1L;
+	
 	private int size = TetrisBoard.BLOCK_SIZE;
 	private int width = size, height = size;
 	private int gap = 3;

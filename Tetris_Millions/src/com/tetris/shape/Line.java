@@ -1,10 +1,12 @@
 package com.tetris.shape;
 
 import java.awt.Color;
+import java.io.Serializable;
 
 import com.tetris.classes.TetrisBlock;
 
-public class Line extends TetrisBlock {
+public class Line extends TetrisBlock implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	public Line(int x, int y) {
 		super(x, y, new Color(121,171,255),new Color(255,255,255));

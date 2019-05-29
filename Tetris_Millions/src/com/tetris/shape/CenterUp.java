@@ -1,10 +1,12 @@
 package com.tetris.shape;
 
 import java.awt.Color;
+import java.io.Serializable;
 
 import com.tetris.classes.TetrisBlock;
 
-public class CenterUp extends TetrisBlock {
+public class CenterUp extends TetrisBlock implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	public CenterUp(int x, int y) {
 		super(x, y, new Color(255,72,255), new Color(255,255,255));
