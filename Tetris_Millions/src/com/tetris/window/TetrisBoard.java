@@ -43,6 +43,9 @@ import com.tetris.shape.Nemo;
 import com.tetris.shape.RightTwoUp;
 import com.tetris.shape.RightUp;
 import com.tetris.window.Button;
+import com.tetris.window.Sound;
+
+import static com.tetris.window.Sound.GameMusic;
 
 public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseListener, ActionListener {
 	private static final long serialVersionUID = 1L;
@@ -96,16 +99,14 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	private boolean usingGrid = true;
 	
 	
-	private boolean usingEffect = true;							// 효과음 (millions)
-	private boolean usingBGM = true;							// 배경음악 (millions)
+	public static boolean usingEffect = true;							// 효과음 (millions)
+	public static boolean usingBGM = true;							// 배경음악 (millions)
 	
 	
 	private int removeLineCount = 0;
 	private int removeLineCombo = 0;
 	
-	//Music 객체 millions
-	public Music GameMusic; // 게임하는 도중의 음악
-	public Music GameEndSound;// 게임 종료 시 효과음
+	public Sound Sound;
 
 
 	public TetrisBoard(Tetris tetris, GameClient client) {
@@ -347,7 +348,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 				// 까만 배경 부분
 				g.setColor(Color.BLACK);
 				// 가운데
-				g.fillRect(3*BOARD_X+maxX*BLOCK_SIZE, BOARD_Y, maxX*BLOCK_SIZE, maxY*BLOCK_SIZE);
+				g.fillRect(3*BOARD_X+maxX*BLOCK_SIZE +(2*BLOCK_SIZE), BOARD_Y, maxX*BLOCK_SIZE+1, maxY*BLOCK_SIZE);
 			
 			
 		
@@ -356,10 +357,10 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			g.setColor(Color.darkGray);
 			// 가운데 가로줄
 			for(int i=1;i<maxY;i++) 
-				g.drawLine(3*BOARD_X+maxX*BLOCK_SIZE, BOARD_Y+BLOCK_SIZE*i, 3*BOARD_X + 2*maxX*BLOCK_SIZE, BOARD_Y + BLOCK_SIZE*i);
+				g.drawLine(3*BOARD_X+maxX*BLOCK_SIZE+(2*BLOCK_SIZE), BOARD_Y+BLOCK_SIZE*i, 3*BOARD_X + 2*maxX*BLOCK_SIZE+(2*BLOCK_SIZE),BOARD_Y + BLOCK_SIZE*i);
 			// 가운데 세로줄
 			for(int i=1;i<maxX;i++) 
-				g.drawLine(3*BOARD_X+maxX*BLOCK_SIZE + BLOCK_SIZE*i, BOARD_Y, 3*BOARD_X+maxX*BLOCK_SIZE + BLOCK_SIZE*i, BOARD_Y + maxY*BLOCK_SIZE);
+				g.drawLine(3*BOARD_X+maxX*BLOCK_SIZE+ BLOCK_SIZE*i+(2*BLOCK_SIZE), BOARD_Y, 3*BOARD_X+maxX*BLOCK_SIZE + BLOCK_SIZE*i+(2*BLOCK_SIZE), BOARD_Y + maxY*BLOCK_SIZE);
 		}
 
 		int x = 0, y = 0, newY = 0;
@@ -662,8 +663,6 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			// 줄이 꽉 찼을 경우. 게임을 종료한다.
 			if (mainBlock.getY() == 1 && mainBlock.getX() > 2 && mainBlock.getX() < 7) {
 				this.gameEndCallBack();
-				GameMusic.close(); // 게임음악 종료
-				GameEndPopUp(); // 게임 종료 시 팝업 이벤트 발생 , millions
 				break;
 			}
 
@@ -731,7 +730,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 
 	/**
 	 * 고스트블럭을 보여준다.
-	 */
+	 */ 
 	private void showGhost() {
 		ghost = getBlockClone(shap, true);
 		controllerGhost.setBlock(ghost);
@@ -897,15 +896,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			this.notify();
 		}
 	}
-	// popup 이벤트 함수 , millions
-	public void GameEndPopUp() {  
-		GameEndSound = new Music("GameOver.mp3", false); 
-		GameEndSound.start();	
-		ImageIcon popupicon = new ImageIcon(TetrisMain.class.getResource("../../../Images/GAMEOVER.PNG"));
-		JOptionPane.showMessageDialog(null, null, "The End", JOptionPane.ERROR_MESSAGE, popupicon);
-	}
-
-
+	
 	public void keyReleased(KeyEvent e) {
 	}
 
@@ -948,10 +939,10 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		} else if (e.getKeyCode() == Button.shift_key) {
 			playBlockHold();
 		}
-		this.getClient().drawBlockShap(controller.getBlock());//HK
-		this.getClient().drawBlockDeposit(blockList);//HK
-		this.getClient().reDrawBlockShap(controller.getBlock());
-		this.getClient().reDrawBlockDeposit(blockList);//HK
+		/*if(client != null) {
+			this.getClient().drawBlockShap(controller.getBlock());//HK
+			this.getClient().drawBlockDeposit(blockList);//HK
+		}*/
 		this.showGhost();
 		this.repaint();
 	}
@@ -975,7 +966,6 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	// 게임 뮤직 키고 끄기 millions
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btnStart) {
-			
 			if(GameMusic != null && GameMusic.isAlive()) {
 				GameMusic.close();
 				if(usingBGM) {
@@ -990,6 +980,8 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 					
 				}
 			}
+			
+			//Sound.GameMusicStart();
 				
 			if(client!=null){
 				client.gameStart((int)comboSpeed.getSelectedItem());
@@ -997,9 +989,12 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 				this.gameStart((int)comboSpeed.getSelectedItem());
 			}
 		}else if(e.getSource() == btnExit){
+			
 			if(GameMusic != null && GameMusic.isAlive()) {
 				GameMusic.close();
 			}
+			//Sound.GameExit();
+			
 			if (client != null) {
 				if (tetris.isNetwork()) {
 					client.closeNetwork(tetris.isServer());

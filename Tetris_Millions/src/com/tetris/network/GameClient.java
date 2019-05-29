@@ -10,8 +10,9 @@ import java.util.ArrayList;
 
 import com.tetris.classes.Block;
 import com.tetris.classes.TetrisBlock;
+import com.tetris.window.Sound;
 import com.tetris.window.Tetris;
-import com.tetris.window.TetrisBoard;
+
 
 //---------------------[ 클라이언트 ]---------------------
 public class GameClient implements Runnable{
@@ -19,6 +20,8 @@ public class GameClient implements Runnable{
 	private Socket socket;
 	private ObjectOutputStream oos;
 	private ObjectInputStream ois;
+	
+	private Sound sound;
 
 	//서버 IP
 	private String ip;
@@ -26,6 +29,7 @@ public class GameClient implements Runnable{
 	private String name;
 	private int index;
 	private boolean isPlay;
+	
 	
 	//생성자
 	public GameClient(Tetris tetris,String ip, int port, String name){
@@ -141,6 +145,7 @@ public class GameClient implements Runnable{
 	
 	//요청하기 : 상대블록 그리기 HK
 		public void drawBlockShap(TetrisBlock shap) {
+			
 			DataShip data = new DataShip(DataShip.DRAW_BLOCK_SHAP);
 			data.setShap(shap);
 			data.setPlayer(index);
@@ -203,6 +208,8 @@ public class GameClient implements Runnable{
 		this.isPlay = isPlay;
 		tetris.gameStart(speed);
 		rePrintSystemMessage(msg);
+		//this.sound.GameMusicStart();
+		
 	}
 	//요청하기 : 메시지
 	public void printSystemMessage(int cmd){
@@ -236,6 +243,7 @@ public class GameClient implements Runnable{
 	public void gameover(){
 		DataShip data = new DataShip(DataShip.GAME_OVER);
 		send(data);
+		//sound.GameOver();
 	}
 	public void reGameover(String msg, int totalAdd){
 		tetris.printSystemMessage(msg);
