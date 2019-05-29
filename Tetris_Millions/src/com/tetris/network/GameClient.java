@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import com.tetris.window.Tetris;
+import com.tetris.window.TetrisBoard;
 
 //---------------------[ 클라이언트 ]---------------------
 public class GameClient implements Runnable{
@@ -15,6 +16,7 @@ public class GameClient implements Runnable{
 	private Socket socket;
 	private ObjectOutputStream oos;
 	private ObjectInputStream ois;
+	private TetrisBoard TetrisBoard;
 
 	//서버 IP
 	private String ip;
@@ -191,6 +193,8 @@ public class GameClient implements Runnable{
 	public void gameover(){
 		DataShip data = new DataShip(DataShip.GAME_OVER);
 		send(data);
+		TetrisBoard.GameEndPopUp();
+		TetrisBoard.GameMusic.close();
 	}
 	public void reGameover(String msg, int totalAdd){
 		tetris.printSystemMessage(msg);

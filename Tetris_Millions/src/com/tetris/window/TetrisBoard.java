@@ -11,6 +11,8 @@ import java.awt.event.MouseAdapter;	// millions
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.ObjectInputStream;
+import java.net.Socket;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;		// millions
@@ -28,7 +30,9 @@ import com.tetris.controller.TetrisController;
 
 import com.tetris.main.Music;	// millions
 import com.tetris.main.TetrisMain;
+import com.tetris.network.DataShip;
 import com.tetris.network.GameClient;
+import com.tetris.network.GameServer;
 import com.tetris.shape.CenterUp;
 import com.tetris.shape.LeftTwoUp;
 import com.tetris.shape.LeftUp;
@@ -45,27 +49,24 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	private GameClient client;
 
 	public static final int BLOCK_SIZE = 20;
-	public static final int BOARD_X = 120;
+	public static final int BOARD_X = 140;
 	public static final int BOARD_Y = 50;
 	private static int minX = 1, minY = 0, maxX = 10, maxY = 21, down = 50, up = 0;
-	private final int MESSAGE_X = 2;
-	private static final int MESSAGE_WIDTH = BLOCK_SIZE * (7 + minX);
-	private static final int MESSAGE_HEIGHT = BLOCK_SIZE * (6 + minY);
-	public static final int PANEL_WIDTH = maxX * BLOCK_SIZE + MESSAGE_WIDTH + BOARD_X;
+	private static final int MESSAGE_WIDTH = BLOCK_SIZE * 7;
+	private static final int MESSAGE_HEIGHT = BLOCK_SIZE * 6;
+	public static final int PANEL_WIDTH = 2 * ( maxX * BLOCK_SIZE + MESSAGE_WIDTH + BOARD_X);
 	public static final int PANEL_HEIGHT = maxY * BLOCK_SIZE + MESSAGE_HEIGHT + BOARD_Y;
 
-	private SystemMessageArea systemMsg = new SystemMessageArea(BLOCK_SIZE * 1, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE * 7,
-			BLOCK_SIZE * 5, BLOCK_SIZE * 12);
-	private MessageArea messageArea = new MessageArea(this, 2, PANEL_HEIGHT - (MESSAGE_HEIGHT - MESSAGE_X),
-			PANEL_WIDTH - BLOCK_SIZE * 7 - 2, MESSAGE_HEIGHT - 2);
-	private JButton btnStart = new JButton("½ÃÀÛÇÏ±â");
-	private JButton btnExit = new JButton("³ª°¡±â");
-	private JCheckBox checkGhost = new JCheckBox("°í½ºÆ®¸ğµå", true);
-	private JCheckBox checkGrid = new JCheckBox("°İÀÚ Ç¥½Ã", true);
+	private SystemMessageArea systemMsg = new SystemMessageArea(BLOCK_SIZE * 1, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE * 7,BLOCK_SIZE * 5, BLOCK_SIZE * 12);
+	private MessageArea messageArea = new MessageArea(this,0, PANEL_HEIGHT - MESSAGE_HEIGHT, PANEL_WIDTH-BLOCK_SIZE*7, MESSAGE_HEIGHT);
+	private JButton btnStart = new JButton("ì‹œì‘í•˜ê¸°");
+	private JButton btnExit = new JButton("ë‚˜ê°€ê¸°");
+	private JCheckBox checkGhost = new JCheckBox("ê³ ìŠ¤íŠ¸ëª¨ë“œ", true);
+	private JCheckBox checkGrid = new JCheckBox("ê²©ì í‘œì‹œ", true);
 	
 	
-	private JCheckBox checkEffect = new JCheckBox("È¿°úÀ½", true);					// È¿°úÀ½ checkbox (millions)
-	private JCheckBox checkBGM = new JCheckBox("¹è°æÀ½¾Ç", true);						// ¹è°æÀ½¾Ç checkbox (millions)
+	private JCheckBox checkEffect = new JCheckBox("íš¨ê³¼ìŒ", true);					// íš¨ê³¼ìŒ checkbox (millions)
+	private JCheckBox checkBGM = new JCheckBox("ë°°ê²½ìŒì•…", true);						// ë°°ê²½ìŒì•… checkbox (millions)
 	
 	
 	private Integer[] lv = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
@@ -90,17 +91,22 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	private boolean usingGrid = true;
 	
 	
-	private boolean usingEffect = true;							// È¿°úÀ½ (millions)
-	private boolean usingBGM = true;							// ¹è°æÀ½¾Ç (millions)
+	private boolean usingEffect = true;							// íš¨ê³¼ìŒ (millions)
+	private boolean usingBGM = true;							// ë°°ê²½ìŒì•… (millions)
 	
 	
 	private int removeLineCount = 0;
 	private int removeLineCombo = 0;
+	
+	//Music ê°ì²´ millions
+	public Music GameMusic; // ê²Œì„í•˜ëŠ” ë„ì¤‘ì˜ ìŒì•…
+	public Music GameEndSound;// ê²Œì„ ì¢…ë£Œ ì‹œ íš¨ê³¼ìŒ
+
 
 	public TetrisBoard(Tetris tetris, GameClient client) {
 		this.tetris = tetris;
 		this.client = client;
-		this.setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));// ±âº»Å©±â
+		this.setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));// ê¸°ë³¸í¬ê¸°
 		this.addKeyListener(this);
 		this.addMouseListener(this);
 		this.setLayout(null);
@@ -114,15 +120,17 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		
 		btnStart.addMouseListener(new MouseAdapter(){
 			public void mousePressed(MouseEvent e) {
-				Music MousePressedSound = new Music("MousePressedSound.mp3", false);
+				Music MousePressedSound = new Music("Start.mp3", false);
 				MousePressedSound.start();
 			}
 			public void mouseEntered(MouseEvent e) {
 				Music MousePressedSound = new Music("BlockMoveSound.mp3", false);
 				MousePressedSound.start();
 			}
+		
 			
-		}); // ¹öÆ° È¿°úÀ½ millions
+			
+		}); // ë²„íŠ¼ íš¨ê³¼ìŒ millions
 		
 		btnExit.setBounds(PANEL_WIDTH - BLOCK_SIZE * 7, PANEL_HEIGHT - messageArea.getHeight() / 2, BLOCK_SIZE * 7,
 				messageArea.getHeight() / 2);
@@ -131,7 +139,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 
 		btnExit.addMouseListener(new MouseAdapter(){
 			public void mousePressed(MouseEvent e) {
-				Music MousePressedSound = new Music("MousePressedSound.mp3", false);
+				Music MousePressedSound = new Music("Exit.mp3", false);
 				MousePressedSound.start();
 			}
 			
@@ -142,12 +150,12 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			
 		});
 		
-		// ¹öÆ° È¿°úÀ½ millions
+		// ë²„íŠ¼ íš¨ê³¼ìŒ millions
 		
-		checkGhost.setBounds(PANEL_WIDTH - BLOCK_SIZE * 12 + 35, 5, 95, 20);		//°í½ºÆ®¸ğµå checkbox ¿ŞÂÊÀ¸·Î ÀÌµ¿.(millions)
+		checkGhost.setBounds(PANEL_WIDTH - BLOCK_SIZE * 12 + 35, 5, 95, 20);		//ê³ ìŠ¤íŠ¸ëª¨ë“œ checkbox ì™¼ìª½ìœ¼ë¡œ ì´ë™.(millions)
 		checkGhost.setBackground(new Color(255, 255, 255));
 		checkGhost.setForeground(Color.GRAY);
-		checkGhost.setFont(new Font("±¼¸²", Font.BOLD, 13));
+		checkGhost.setFont(new Font("êµ´ë¦¼", Font.BOLD, 13));
 		checkGhost.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
@@ -156,10 +164,10 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 				TetrisBoard.this.repaint();
 			}
 		});
-		checkGrid.setBounds(PANEL_WIDTH - BLOCK_SIZE * 12 + 35, 25, 95, 20);		//°İÀÚ¸ğµå checkbox ¿ŞÂÊÀ¸·Î ÀÌµ¿.(millions)
+		checkGrid.setBounds(PANEL_WIDTH - BLOCK_SIZE * 12 + 35, 25, 95, 20);		//ê²©ìëª¨ë“œ checkbox ì™¼ìª½ìœ¼ë¡œ ì´ë™.(millions)
 		checkGrid.setBackground(new Color(255, 255, 255));
 		checkGrid.setForeground(Color.GRAY);
-		checkGrid.setFont(new Font("±¼¸²", Font.BOLD, 13));
+		checkGrid.setFont(new Font("êµ´ë¦¼", Font.BOLD, 13));
 		checkGrid.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
@@ -168,35 +176,45 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 				TetrisBoard.this.repaint();
 			}
 		});
-		
-		checkEffect.setBounds(PANEL_WIDTH - BLOCK_SIZE * 7 + 35, 5, 95, 20);		//È¿°úÀ½ checkbox À§Ä¡ ¹× µğÀÚÀÎ(millions)
+
+		checkEffect.setBounds(PANEL_WIDTH - BLOCK_SIZE * 7 + 35, 5, 95, 20);		//íš¨ê³¼ìŒ checkbox ìœ„ì¹˜ ë° ë””ìì¸(millions)
 		checkEffect.setBackground(new Color(255, 255, 255));
 		checkEffect.setForeground(Color.GRAY);
-		checkEffect.setFont(new Font("±¼¸²", Font.BOLD, 13));
+		checkEffect.setFont(new Font("êµ´ë¦¼", Font.BOLD, 13));
+		checkEffect.setRequestFocusEnabled(false);
 		checkEffect.addChangeListener(new ChangeListener() {
+			
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
-				//usingEffect = checkEffect.isSelected();
+				if (checkEffect.isSelected() == true) {
+					usingEffect = true;
+				} else {
+					usingEffect = false;
+				}		
 				TetrisBoard.this.setRequestFocusEnabled(true);
 				TetrisBoard.this.repaint();
 			}
 		});
 		
-		checkBGM.setBounds(PANEL_WIDTH - BLOCK_SIZE * 7 + 35, 25, 95, 20);			//¹è°æÀ½¾Ç checkbox À§Ä¡ ¹× µğÀÚÀÎ(millions)
+		checkBGM.setBounds(PANEL_WIDTH - BLOCK_SIZE * 7 + 35, 25, 95, 20);			//ë°°ê²½ìŒì•… checkbox ìœ„ì¹˜ ë° ë””ìì¸(millions)
 		checkBGM.setBackground(new Color(255, 255, 255));
 		checkBGM.setForeground(Color.GRAY);
-		checkBGM.setFont(new Font("±¼¸²", Font.BOLD, 13));
+		checkBGM.setFont(new Font("êµ´ë¦¼", Font.BOLD, 13));
+		checkBGM.setRequestFocusEnabled(false);
 		checkBGM.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
-				//usingBGM = checkBGM.isSelected();
+				if (checkBGM.isSelected() == true) {
+					usingBGM = true;
+				} else {
+					usingBGM = false;
+				}	
 				TetrisBoard.this.setRequestFocusEnabled(true);
 				TetrisBoard.this.repaint();
 			}
 		});
 		
-		
-		comboSpeed.setBounds(PANEL_WIDTH - BLOCK_SIZE * 13, 5, 45, 20); 			// ¼Óµµ ¼ıÀÚ Ç¥½Ã ¿ŞÂÊÀ¸·Î ÀÌµ¿.(millions)
+		comboSpeed.setBounds(PANEL_WIDTH - BLOCK_SIZE * 13, 5, 45, 20); 			// ì†ë„ ìˆ«ì í‘œì‹œ ì™¼ìª½ìœ¼ë¡œ ì´ë™.(millions)
 		this.add(comboSpeed);
 
 		this.add(systemMsg);
@@ -206,8 +224,8 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		this.add(checkGhost);
 		this.add(checkGrid);
 		
-		this.add(checkEffect);														//È¿°úÀ½(millions)
-		this.add(checkBGM);															//¹è°æÀ½¾Ç(millions)
+		this.add(checkEffect);														//íš¨ê³¼ìŒ(millions)
+		this.add(checkBGM);															//ë°°ê²½ìŒì•…(millions)
 	}
 
 	public void startNetworking(String ip, int port, String nickName) {
@@ -218,12 +236,12 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	}
 
 	/**
-	 * TODO : °ÔÀÓ½ÃÀÛ °ÔÀÓÀ» ½ÃÀÛÇÑ´Ù.
+	 * TODO : ê²Œì„ì‹œì‘ ê²Œì„ì„ ì‹œì‘í•œë‹¤.
 	 */
 
 	public void gameStart(int speed) {
 		comboSpeed.setSelectedItem(new Integer(speed));
-		// µ¹°í ÀÖÀ» ½º·¹µå¸¦ Á¤Áö½ÃÅ²´Ù.
+		// ëŒê³  ìˆì„ ìŠ¤ë ˆë“œë¥¼ ì •ì§€ì‹œí‚¨ë‹¤.
 		if (th != null) {
 			try {
 				isPlay = false;
@@ -233,12 +251,12 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			}
 		}
 
-		// ¸Ê¼ÂÆÃ
+		// ë§µì…‹íŒ…
 		map = new Block[maxY][maxX];
 		blockList = new ArrayList<Block>();
 		nextBlocks = new ArrayList<TetrisBlock>();
 
-		// µµÇü¼ÂÆÃ
+		// ë„í˜•ì…‹íŒ…
 		shap = getRandomTetrisBlock();
 		ghost = getBlockClone(shap, true);
 		hold = null;
@@ -250,7 +268,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			nextBlocks.add(getRandomTetrisBlock());
 		}
 
-		// ½º·¹µå ¼ÂÆÃ
+		// ìŠ¤ë ˆë“œ ì…‹íŒ…
 		isPlay = true;
 		th = new Thread(this);
 		th.start();
@@ -262,62 +280,109 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		g.clearRect(0, 0, this.getWidth(), this.getHeight() + 1);
 
 		g.setColor(new Color(255,255,255));
-		g.fillRect(0, 0, (maxX + minX + 13) * BLOCK_SIZE + 1, BOARD_Y);
+		g.fillRect(0, 0, 2*(2*BOARD_X+maxX*BLOCK_SIZE), BOARD_Y);
 
 		g.setColor(new Color(255, 255, 255));
-		g.fillRect(0, BOARD_Y, (maxX + minX + 13) * BLOCK_SIZE + 1, maxY * BLOCK_SIZE + 1);
+		g.fillRect(0, BOARD_Y, 2*(2*BOARD_X+maxX*BLOCK_SIZE), maxY*BLOCK_SIZE);
 		g.setColor(Color.GRAY);
 
-		// IP Ãâ·Â
+		// IP ì¶œë ¥
 		g.drawString("ip : " + ip + "     port : " + port, 20, 20);
 
-		// NickName Ãâ·Â
-		g.drawString("´Ğ³×ÀÓ : " + nickName, 20, 40);
+		// NickName ì¶œë ¥
+		g.drawString("ë‹‰ë„¤ì„ : " + nickName, 20, 40);
 
-		// ¼Óµµ
+		// ì†ë„
 		Font font = g.getFont();
-		g.setFont(new Font("±¼¸²", Font.BOLD, 13));
-		g.drawString("¼Óµµ", PANEL_WIDTH - BLOCK_SIZE * 15, 20);
+		g.setFont(new Font("êµ´ë¦¼", Font.BOLD, 13));
+		g.drawString("ì†ë„", PANEL_WIDTH - BLOCK_SIZE * 15, 20);
 		g.setFont(font);
 
 		g.setColor(Color.lightGray);
-		g.fillRect(BOARD_X + BLOCK_SIZE * minX, BOARD_Y, maxX * BLOCK_SIZE + 1, maxY * BLOCK_SIZE + 1);
-		g.fillRect(BLOCK_SIZE * minX, BOARD_Y + BLOCK_SIZE, BLOCK_SIZE * 5, BLOCK_SIZE * 5);
-		g.fillRect(BOARD_X + BLOCK_SIZE * minX + (maxX + 1) * BLOCK_SIZE + 1, BOARD_Y + BLOCK_SIZE, BLOCK_SIZE * 5,
-				BLOCK_SIZE * 5);
-		g.fillRect(BOARD_X + BLOCK_SIZE * minX + (maxX + 1) * BLOCK_SIZE + 1, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE * 7,
-				BLOCK_SIZE * 5, BLOCK_SIZE * 12);
+		g.fillRect(BOARD_X, BOARD_Y, maxX*BLOCK_SIZE, maxY*BLOCK_SIZE);
+		// ì™¼ìª½
+		g.fillRect(BLOCK_SIZE*minX ,BOARD_Y + BLOCK_SIZE, BLOCK_SIZE*5,BLOCK_SIZE*5);
+		// ì˜¤ë¥¸ìª½ ìœ„
+		g.fillRect(BOARD_X + maxX*BLOCK_SIZE+ BLOCK_SIZE*minX, BOARD_Y + BLOCK_SIZE, BLOCK_SIZE*5,BLOCK_SIZE*5);
+		// ì˜¤ë¥¸ìª½ ì•„ë˜
+		g.fillRect(BOARD_X + maxX*BLOCK_SIZE + BLOCK_SIZE*minX, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*7, BLOCK_SIZE*5,BLOCK_SIZE*12);
 
-		// HOLD NEXT Ãâ·Â
+		// HOLD NEXT ì¶œë ¥
 		g.setFont(new Font(font.getFontName(), font.getStyle(), 20));
-		g.drawString("H O L D", BLOCK_SIZE + 12, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE * 5 + 20);
-		g.drawString("N E X T", BOARD_X + BLOCK_SIZE + (maxX + 1) * BLOCK_SIZE + 1 + 12,
-				BOARD_Y + BLOCK_SIZE + BLOCK_SIZE * 5 + 20);
+		g.drawString("H O L D", BLOCK_SIZE*minX + 15, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*5 + 20);
+		g.drawString("N E X T", BOARD_X + maxX*BLOCK_SIZE+ BLOCK_SIZE*minX + 15, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*5 + 20);
 		g.setFont(font);
 
-		// ±×¸®µå Ç¥½Ã
+		// ê·¸ë¦¬ë“œ í‘œì‹œ
 		if (usingGrid) {
 			g.setColor(Color.WHITE);
-			for (int i = 1; i < maxY; i++)
-				g.drawLine(BOARD_X + BLOCK_SIZE * minX, BOARD_Y + BLOCK_SIZE * (i + minY),
-						BOARD_X + (maxX + minX) * BLOCK_SIZE, BOARD_Y + BLOCK_SIZE * (i + minY));
-			for (int i = 1; i < maxX; i++)
-				g.drawLine(BOARD_X + BLOCK_SIZE * (i + minX), BOARD_Y + BLOCK_SIZE * minY,
-						BOARD_X + BLOCK_SIZE * (i + minX), BOARD_Y + BLOCK_SIZE * (minY + maxY));
-			for (int i = 1; i < 5; i++)
-				g.drawLine(BLOCK_SIZE * minX, BOARD_Y + BLOCK_SIZE * (i + 1), BLOCK_SIZE * (minX + 5) - 1,
-						BOARD_Y + BLOCK_SIZE * (i + 1));
-			for (int i = 1; i < 5; i++)
-				g.drawLine(BLOCK_SIZE * (minY + i + 1), BOARD_Y + BLOCK_SIZE, BLOCK_SIZE * (minY + i + 1),
-						BOARD_Y + BLOCK_SIZE * (minY + 6) - 1);
-			for (int i = 1; i < 5; i++)
-				g.drawLine(BOARD_X + BLOCK_SIZE * minX + (maxX + 1) * BLOCK_SIZE + 1, BOARD_Y + BLOCK_SIZE * (i + 1),
-						BOARD_X + BLOCK_SIZE * minX + (maxX + 1) * BLOCK_SIZE + BLOCK_SIZE * 5,
-						BOARD_Y + BLOCK_SIZE * (i + 1));
-			for (int i = 1; i < 5; i++)
-				g.drawLine(BOARD_X + BLOCK_SIZE * minX + (maxX + 1 + i) * BLOCK_SIZE + 1, BOARD_Y + BLOCK_SIZE,
-						BOARD_X + BLOCK_SIZE * minX + BLOCK_SIZE + BLOCK_SIZE * (10 + i) + 1,
-						BOARD_Y + BLOCK_SIZE * 6 - 1);
+			for(int i=1;i<maxY;i++) 
+				g.drawLine(BOARD_X, BOARD_Y+BLOCK_SIZE*i, BOARD_X + maxX*BLOCK_SIZE, BOARD_Y + BLOCK_SIZE*i);
+			// ê°€ìš´ë° ì„¸ë¡œì¤„
+			for(int i=1;i<maxX;i++) 
+				g.drawLine(BOARD_X + BLOCK_SIZE*i, BOARD_Y, BOARD_X + BLOCK_SIZE*i, BOARD_Y + maxY*BLOCK_SIZE);
+			// ì™¼ìª½ ê°€ë¡œì¤„
+			for(int i=1;i<5;i++) 
+				g.drawLine(BLOCK_SIZE*minX ,BOARD_Y + BLOCK_SIZE*(i+minX), BLOCK_SIZE*(minX+5),BOARD_Y + BLOCK_SIZE*(i+minX));
+			// ì™¼ìª½ ì„¸ë¡œì¤„
+			for(int i=1;i<5;i++) 
+				g.drawLine(BLOCK_SIZE*(i+minX) ,BOARD_Y + BLOCK_SIZE*minX, BLOCK_SIZE*(i+minX),BOARD_Y + BLOCK_SIZE*(minX+5));
+			// ì˜¤ë¥¸ìª½ ìœ„ ê°€ë¡œì¤„
+			for(int i=1;i<5;i++) 
+				g.drawLine(BOARD_X + BLOCK_SIZE*minX + maxX*BLOCK_SIZE, BOARD_Y + BLOCK_SIZE*(i+minX), 
+						BOARD_X + maxX*BLOCK_SIZE + BLOCK_SIZE*(minX+5), BOARD_Y + BLOCK_SIZE*(i+minX));
+			// ì˜¤ë¥¸ìª½ ìœ„ ì„¸ë¡œì¤„
+			for(int i=1;i<5;i++) 
+				g.drawLine(BOARD_X + maxX*BLOCK_SIZE + BLOCK_SIZE*(i+minX), BOARD_Y + BLOCK_SIZE*minX, 
+						BOARD_X + maxX*BLOCK_SIZE + BLOCK_SIZE*(i+minX), BOARD_Y + BLOCK_SIZE*(minX+5));	
+		
+		}
+		
+		g.drawLine(this.getWidth()/2, BOARD_Y, this.getWidth()/2, BOARD_Y+maxY*BLOCK_SIZE);
+		
+		// <<2p í™”ë©´>>
+				// ê¹Œë§Œ ë°°ê²½ ë¶€ë¶„
+				g.setColor(Color.BLACK);
+				// ê°€ìš´ë°
+				g.fillRect(3*BOARD_X+maxX*BLOCK_SIZE, BOARD_Y, maxX*BLOCK_SIZE, maxY*BLOCK_SIZE);
+				// ì™¼ìª½
+				g.fillRect(2*BOARD_X+maxX*BLOCK_SIZE+BLOCK_SIZE*minX,BOARD_Y + BLOCK_SIZE, BLOCK_SIZE*5,BLOCK_SIZE*5);
+				// ì˜¤ë¥¸ìª½ ìœ„
+				g.fillRect(3*BOARD_X + 2*maxX*BLOCK_SIZE+BLOCK_SIZE*minX, BOARD_Y + BLOCK_SIZE, BLOCK_SIZE*5,BLOCK_SIZE*5);
+				// ì˜¤ë¥¸ìª½ ì•„ë˜
+				g.fillRect(3*BOARD_X + 2*maxX*BLOCK_SIZE+BLOCK_SIZE*minX, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*7, BLOCK_SIZE*5,BLOCK_SIZE*12);
+				
+				//HOLD  NEXT ì¶œë ¥
+				g.setFont(new Font(font.getFontName(),font.getStyle(),20));
+				g.setColor(Color.BLACK);
+				g.drawString("H O L D", 2*BOARD_X+maxX*BLOCK_SIZE+BLOCK_SIZE*minX + 15, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*5 + 20);
+				g.drawString("N E X T", 3*BOARD_X + 2*maxX*BLOCK_SIZE+ BLOCK_SIZE*minX + 15, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*5 + 20);
+				g.setFont(font);
+				
+		
+		//ê·¸ë¦¬ë“œ í‘œì‹œ
+		if(usingGrid){
+			g.setColor(Color.darkGray);
+			// ê°€ìš´ë° ê°€ë¡œì¤„
+			for(int i=1;i<maxY;i++) 
+				g.drawLine(3*BOARD_X+maxX*BLOCK_SIZE, BOARD_Y+BLOCK_SIZE*i, 3*BOARD_X + 2*maxX*BLOCK_SIZE, BOARD_Y + BLOCK_SIZE*i);
+			// ê°€ìš´ë° ì„¸ë¡œì¤„
+			for(int i=1;i<maxX;i++) 
+				g.drawLine(3*BOARD_X+maxX*BLOCK_SIZE + BLOCK_SIZE*i, BOARD_Y, 3*BOARD_X+maxX*BLOCK_SIZE + BLOCK_SIZE*i, BOARD_Y + maxY*BLOCK_SIZE);
+			// ì™¼ìª½ ê°€ë¡œì¤„
+			for(int i=1;i<5;i++) 
+				g.drawLine(2*BOARD_X+maxX*BLOCK_SIZE+BLOCK_SIZE*minX, BOARD_Y + BLOCK_SIZE*(i+minX), 2*BOARD_X+maxX*BLOCK_SIZE+BLOCK_SIZE*(minX+5),BOARD_Y + BLOCK_SIZE*(i+minX));
+			// ì™¼ìª½ ì„¸ë¡œì¤„
+			for(int i=1;i<5;i++) 
+				g.drawLine(2*BOARD_X+maxX*BLOCK_SIZE+BLOCK_SIZE*(i+minX),BOARD_Y + BLOCK_SIZE*minX, 2*BOARD_X+maxX*BLOCK_SIZE+BLOCK_SIZE*(i+minX),BOARD_Y + BLOCK_SIZE*(minX+5));
+			// ì˜¤ë¥¸ìª½ ìœ„ ê°€ë¡œì¤„
+			for(int i=1;i<5;i++) 
+				g.drawLine(3*BOARD_X + 2*maxX*BLOCK_SIZE+BLOCK_SIZE*minX, BOARD_Y + BLOCK_SIZE*(i+minX), 
+						3*BOARD_X + 2*maxX*BLOCK_SIZE+BLOCK_SIZE*(minX+5), BOARD_Y + BLOCK_SIZE*(i+minX));
+			// ì˜¤ë¥¸ìª½ ìœ„ ì„¸ë¡œì¤„
+			for(int i=1;i<5;i++) 
+				g.drawLine(3*BOARD_X + 2*maxX*BLOCK_SIZE+BLOCK_SIZE*(i+minX), BOARD_Y + BLOCK_SIZE*minX, 
+						3*BOARD_X + 2*maxX*BLOCK_SIZE+BLOCK_SIZE*(i+minX), BOARD_Y + BLOCK_SIZE*(minX+5));	
 		}
 
 		int x = 0, y = 0, newY = 0;
@@ -333,7 +398,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			hold.setPosX(x);
 			hold.setPosY(y);
 		}
-
+		
 		if (nextBlocks != null) {
 			x = 0;
 			y = 0;
@@ -395,15 +460,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			shap.setPosY(y);
 		}
 		
-		// È¿°úÀ½ ±â´É
-		if(usingEffect) {
-			
-		}
 		
-		// BGM ±â´É
-		if(usingBGM) {
-			
-		}
 	}
 
 	@Override
@@ -452,54 +509,54 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	}// run()
 
 	/**
-	 * ¸Ê(º¸ÀÌ±â, ³í¸®)À» »óÇÏ·Î ÀÌµ¿ÇÑ´Ù.
+	 * ë§µ(ë³´ì´ê¸°, ë…¼ë¦¬)ì„ ìƒí•˜ë¡œ ì´ë™í•œë‹¤.
 	 * 
 	 * @param lineNumber
 	 * @param num        -1 or 1
 	 */
 	public void dropBoard(int lineNumber, int num) {
 
-		// ¸ÊÀ» ¶³¾îÆ®¸°´Ù.
+		// ë§µì„ ë–¨ì–´íŠ¸ë¦°ë‹¤.
 		this.dropMap(lineNumber, num);
 
-		// ÁÂÇ¥¹Ù²ãÁÖ±â(1¸¸Å­Áõ°¡)
+		// ì¢Œí‘œë°”ê¿”ì£¼ê¸°(1ë§Œí¼ì¦ê°€)
 		this.changeTetrisBlockLine(lineNumber, num);
 
-		// ´Ù½Ã Ã¼Å©ÇÏ±â
+		// ë‹¤ì‹œ ì²´í¬í•˜ê¸°
 		this.checkMap();
 
-		// °í½ºÆ® ´Ù½Ã »Ñ¸®±â
+		// ê³ ìŠ¤íŠ¸ ë‹¤ì‹œ ë¿Œë¦¬ê¸°
 		this.showGhost();
 	}
 
 	/**
-	 * lineNumberÀÇ À§ÂÊ ¶óÀÎµéÀ» ¸ğµÎ numÄ­¾¿ ³»¸°´Ù.
+	 * lineNumberì˜ ìœ„ìª½ ë¼ì¸ë“¤ì„ ëª¨ë‘ numì¹¸ì”© ë‚´ë¦°ë‹¤.
 	 * 
 	 * @param lineNumber
-	 * @param num        Ä­¼ö -1,1
+	 * @param num        ì¹¸ìˆ˜ -1,1
 	 */
 	private void dropMap(int lineNumber, int num) {
 		if (num == 1) {
-			// ÇÑÁÙ¾¿ ³»¸®±â
+			// í•œì¤„ì”© ë‚´ë¦¬ê¸°
 			for (int i = lineNumber; i > 0; i--) {
 				for (int j = 0; j < map[i].length; j++) {
 					map[i][j] = map[i - 1][j];
 				}
 			}
 
-			// ¸Ç À­ÁÙÀº null·Î ¸¸µé±â
+			// ë§¨ ìœ—ì¤„ì€ nullë¡œ ë§Œë“¤ê¸°
 			for (int j = 0; j < map[0].length; j++) {
 				map[0][j] = null;
 			}
 		} else if (num == -1) {
-			// ÇÑÁÙ¾¿ ¿Ã¸®±â
+			// í•œì¤„ì”© ì˜¬ë¦¬ê¸°
 			for (int i = 1; i <= lineNumber; i++) {
 				for (int j = 0; j < map[i].length; j++) {
 					map[i - 1][j] = map[i][j];
 				}
 			}
 
-			// removeLineÀº null·Î ¸¸µé±â
+			// removeLineì€ nullë¡œ ë§Œë“¤ê¸°
 			for (int j = 0; j < map[0].length; j++) {
 				map[lineNumber][j] = null;
 			}
@@ -507,10 +564,10 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	}
 
 	/**
-	 * lineNumberÀÇ À§ÂÊ ¶óÀÎµéÀ» ¸ğµÎ num¸¸Å­ ÀÌµ¿½ÃÅ²´Ù.
+	 * lineNumberì˜ ìœ„ìª½ ë¼ì¸ë“¤ì„ ëª¨ë‘ numë§Œí¼ ì´ë™ì‹œí‚¨ë‹¤.
 	 * 
 	 * @param lineNumber
-	 * @param num        ÀÌµ¿ÇÒ ¶óÀÎ
+	 * @param num        ì´ë™í•  ë¼ì¸
 	 */
 	private void changeTetrisBlockLine(int lineNumber, int num) {
 		int y = 0, posY = 0;
@@ -523,7 +580,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	}
 
 	/**
-	 * Å×Æ®¸®½º ºí·°À» °íÁ¤½ÃÅ²´Ù.
+	 * í…ŒíŠ¸ë¦¬ìŠ¤ ë¸”ëŸ­ì„ ê³ ì •ì‹œí‚¨ë‹¤.
 	 */
 	private void fixingTetrisBlock() {
 		synchronized (this) {
@@ -539,7 +596,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		boolean isCombo = false;
 		removeLineCount = 0;
 
-		// drawList Ãß°¡
+		// drawList ì¶”ê°€
 		for (Block block : shap.getBlock()) {
 			blockList.add(block);
 		}
@@ -552,19 +609,19 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		else
 			removeLineCombo = 0;
 
-		// Äİ¹é¸Ş¼Òµå
+		// ì½œë°±ë©”ì†Œë“œ
 		this.getFixBlockCallBack(blockList, removeLineCombo, removeLineCount);
 
-		// ´ÙÀ½ Å×Æ®¸®½º ºí·°À» °¡Á®¿Â´Ù.
+		// ë‹¤ìŒ í…ŒíŠ¸ë¦¬ìŠ¤ ë¸”ëŸ­ì„ ê°€ì ¸ì˜¨ë‹¤.
 		this.nextTetrisBlock();
 
-		// È¦µå°¡´É»óÅÂ·Î ¸¸µé¾îÁØ´Ù.
+		// í™€ë“œê°€ëŠ¥ìƒíƒœë¡œ ë§Œë“¤ì–´ì¤€ë‹¤.
 		isHold = false;
 	}// fixingTetrisBlock()
 
 	/**
 	 * 
-	 * @return true-Áö¿ì±â¼º°ø, false-Áö¿ì±â½ÇÆĞ
+	 * @return true-ì§€ìš°ê¸°ì„±ê³µ, false-ì§€ìš°ê¸°ì‹¤íŒ¨
 	 */
 	private boolean checkMap() {
 		boolean isCombo = false;
@@ -574,22 +631,22 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		for (int i = 0; i < blockList.size(); i++) {
 			mainBlock = blockList.get(i);
 
-			// map¿¡ Ãß°¡
+			// mapì— ì¶”ê°€
 			if (mainBlock.getY() < 0 || mainBlock.getY() >= maxY)
 				continue;
 
 			if (mainBlock.getY() < maxY && mainBlock.getX() < maxX)
 				map[mainBlock.getY()][mainBlock.getX()] = mainBlock;
 
-			// ÁÙÀÌ ²Ë Ã¡À» °æ¿ì. °ÔÀÓÀ» Á¾·áÇÑ´Ù.
+			// ì¤„ì´ ê½‰ ì°¼ì„ ê²½ìš°. ê²Œì„ì„ ì¢…ë£Œí•œë‹¤.
 			if (mainBlock.getY() == 1 && mainBlock.getX() > 2 && mainBlock.getX() < 7) {
 				this.gameEndCallBack();
-				GameMusic.close(); // °ÔÀÓÀ½¾Ç Á¾·á
-				GameEndPopUp(); // °ÔÀÓ Á¾·á ½Ã ÆË¾÷ ÀÌº¥Æ® ¹ß»ı , millions
+				GameMusic.close(); // ê²Œì„ìŒì•… ì¢…ë£Œ
+				GameEndPopUp(); // ê²Œì„ ì¢…ë£Œ ì‹œ íŒì—… ì´ë²¤íŠ¸ ë°œìƒ , millions
 				break;
 			}
 
-			// 1ÁÙ°³¼ö Ã¼Å©
+			// 1ì¤„ê°œìˆ˜ ì²´í¬
 			count = 0;
 			for (int j = 0; j < maxX; j++) {
 				if (map[mainBlock.getY()][j] != null)
@@ -597,7 +654,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 
 			}
 
-			// blockÀÇ ÇØ´ç lineÀ» Áö¿î´Ù.
+			// blockì˜ í•´ë‹¹ lineì„ ì§€ìš´ë‹¤.
 			if (count == maxX) {
 				removeLineCount++;
 				this.removeBlockLine(mainBlock.getY());
@@ -608,7 +665,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	}
 
 	/**
-	 * Å×Æ®¸®½º ºí·° ¸®½ºÆ®¿¡¼­ Å×Æ®¸®½º ºí·°À» ¹Ş¾Æ¿Â´Ù.
+	 * í…ŒíŠ¸ë¦¬ìŠ¤ ë¸”ëŸ­ ë¦¬ìŠ¤íŠ¸ì—ì„œ í…ŒíŠ¸ë¦¬ìŠ¤ ë¸”ëŸ­ì„ ë°›ì•„ì˜¨ë‹¤.
 	 */
 	public void nextTetrisBlock() {
 		shap = nextBlocks.get(0);
@@ -624,26 +681,27 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	}
 
 	/**
-	 * lineNumber ¶óÀÎÀ» »èÁ¦ÇÏ°í, drawlist¿¡¼­ Á¦°ÅÇÏ°í, mapÀ» ¾Æ·¡·Î ³»¸°´Ù.
+	 * lineNumber ë¼ì¸ì„ ì‚­ì œí•˜ê³ , drawlistì—ì„œ ì œê±°í•˜ê³ , mapì„ ì•„ë˜ë¡œ ë‚´ë¦°ë‹¤.
 	 * 
-	 * @param lineNumber »èÁ¦¶óÀÎ
+	 * @param lineNumber ì‚­ì œë¼ì¸
 	 */
 	private void removeBlockLine(int lineNumber) {
-		// 1ÁÙÀ» Áö¿öÁÜ
-		for (int j = 0; j < maxX; j++) {
+		new Music("Clear.mp3", false).start();
+		// 1ì¤„ì„ ì§€ì›Œì¤Œ
+		for (int j = 0; j < maxX ; j++) {
 			for (int s = 0; s < blockList.size(); s++) {
 				Block b = blockList.get(s);
 				if (b == map[lineNumber][j])
 					blockList.remove(s);
 			}
 			map[lineNumber][j] = null;
-		} // for(j)
+		}// for(j)
 
-		this.dropBoard(lineNumber, 1);
+		this.dropBoard(lineNumber,1);
 	}
 
 	/**
-	 * TODO : °ÔÀÓÁ¾·áÄİº¤ °ÔÀÓÀÌ Á¾·áµÇ¸é ½ÇÇàµÇ´Â ¸Ş¼Òµå
+	 * TODO : ê²Œì„ì¢…ë£Œì½œë²¡ ê²Œì„ì´ ì¢…ë£Œë˜ë©´ ì‹¤í–‰ë˜ëŠ” ë©”ì†Œë“œ
 	 */
 	public void gameEndCallBack() {
 		client.gameover();
@@ -651,7 +709,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	}
 
 	/**
-	 * °í½ºÆ®ºí·°À» º¸¿©ÁØ´Ù.
+	 * ê³ ìŠ¤íŠ¸ë¸”ëŸ­ì„ ë³´ì—¬ì¤€ë‹¤.
 	 */
 	private void showGhost() {
 		ghost = getBlockClone(shap, true);
@@ -660,9 +718,9 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	}
 
 	/**
-	 * ·£´ıÀ¸·Î Å×Æ®¸®½º ºí·°À» »ı¼ºÇÏ°í ¹İÈ¯ÇÑ´Ù.
+	 * ëœë¤ìœ¼ë¡œ í…ŒíŠ¸ë¦¬ìŠ¤ ë¸”ëŸ­ì„ ìƒì„±í•˜ê³  ë°˜í™˜í•œë‹¤.
 	 * 
-	 * @return Å×Æ®¸®½º ºí·°
+	 * @return í…ŒíŠ¸ë¦¬ìŠ¤ ë¸”ëŸ­
 	 */
 	public TetrisBlock getRandomTetrisBlock() {
 		switch ((int) (Math.random() * 7)) {
@@ -685,10 +743,10 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	}
 
 	/**
-	 * tetrisBlock°ú °°Àº ¸ğ¾çÀ¸·Î °í½ºÆ®ÀÇ ºí·°¸ğ¾çÀ» ¹İÈ¯ÇÑ´Ù.
+	 * tetrisBlockê³¼ ê°™ì€ ëª¨ì–‘ìœ¼ë¡œ ê³ ìŠ¤íŠ¸ì˜ ë¸”ëŸ­ëª¨ì–‘ì„ ë°˜í™˜í•œë‹¤.
 	 * 
-	 * @param tetrisBlock °í½ºÆ®ÀÇ ºí·°¸ğ¾çÀ» °áÁ¤ÇÒ ºí·°
-	 * @return °í½ºÆ®ÀÇ ºí·°¸ğ¾çÀ» ¹İÈ¯
+	 * @param tetrisBlock ê³ ìŠ¤íŠ¸ì˜ ë¸”ëŸ­ëª¨ì–‘ì„ ê²°ì •í•  ë¸”ëŸ­
+	 * @return ê³ ìŠ¤íŠ¸ì˜ ë¸”ëŸ­ëª¨ì–‘ì„ ë°˜í™˜
 	 */
 	public TetrisBlock getBlockClone(TetrisBlock tetrisBlock, boolean isGhost) {
 		TetrisBlock blocks = null;
@@ -725,10 +783,10 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	}
 
 	/**
-	 * TODO : Äİ¹é¸Ş¼Òµå Å×Æ®¸®½º ºí·°ÀÌ °íÁ¤µÉ ¶§ ÀÚµ¿ È£Ãâ µÈ´Ù.
+	 * TODO : ì½œë°±ë©”ì†Œë“œ í…ŒíŠ¸ë¦¬ìŠ¤ ë¸”ëŸ­ì´ ê³ ì •ë  ë•Œ ìë™ í˜¸ì¶œ ëœë‹¤.
 	 * 
-	 * @param removeCombo   ÇöÀç ÄŞº¸ ¼ö
-	 * @param removeMaxLine ÇÑ¹ø¿¡ Áö¿î ÁÙ¼ö
+	 * @param removeCombo   í˜„ì¬ ì½¤ë³´ ìˆ˜
+	 * @param removeMaxLine í•œë²ˆì— ì§€ìš´ ì¤„ìˆ˜
 	 */
 	public void getFixBlockCallBack(ArrayList<Block> blockList, int removeCombo, int removeMaxLine) {
 		if (removeCombo < 3) {
@@ -754,27 +812,28 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	}
 
 	/**
-	 * ºí·°À» È¦µå½ÃÅ²´Ù.
+	 * ë¸”ëŸ­ì„ í™€ë“œì‹œí‚¨ë‹¤.
 	 */
 	public void playBlockHold() {
-		if (isHold)
-			return;
-
-		if (hold == null) {
-			hold = getBlockClone(shap, false);
+		if(isHold) return;
+		
+		if(hold==null){
+			new Music("Save.mp3", false).start();
+			hold = getBlockClone(shap,false);
 			this.nextTetrisBlock();
-		} else {
-			TetrisBlock tmp = getBlockClone(shap, false);
-			shap = getBlockClone(hold, false);
-			hold = getBlockClone(tmp, false);
+		}else{
+			new Music("Save.mp3", false).start();
+			TetrisBlock tmp = getBlockClone(shap,false);
+			shap = getBlockClone(hold,false);
+			hold = getBlockClone(tmp,false);
 			this.initController();
 		}
-
+		
 		isHold = true;
 	}
 
 	/**
-	 * °¡Àå ¹Ø¿¡ ÁÙ¿¡ ºí·°À» »ı¼ºÇÑ´Ù.
+	 * ê°€ì¥ ë°‘ì— ì¤„ì— ë¸”ëŸ­ì„ ìƒì„±í•œë‹¤.
 	 * 
 	 * @param numOfLine
 	 */
@@ -782,8 +841,8 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 
 	public void addBlockLine(int numOfLine) {
 		stop = true;
-		// ³»¸®±â°¡ ÀÖÀ» ¶§±îÁö ´ë±âÇÑ´Ù.
-		// ³»¸®±â¸¦ ¸ğµÎ ½ÇÇàÇÑ ÈÄ ´Ù½Ã ½ÃÀÛÇÑ´Ù.
+		// ë‚´ë¦¬ê¸°ê°€ ìˆì„ ë•Œê¹Œì§€ ëŒ€ê¸°í•œë‹¤.
+		// ë‚´ë¦¬ê¸°ë¥¼ ëª¨ë‘ ì‹¤í–‰í•œ í›„ ë‹¤ì‹œ ì‹œì‘í•œë‹¤.
 		Block block;
 		int rand = (int) (Math.random() * maxX);
 		for (int i = 0; i < numOfLine; i++) {
@@ -796,7 +855,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 					map[maxY - 1][col] = block;
 				}
 			}
-			// ¸¸¾à ³»·Á¿À´Â ºí·°°ú °ãÄ¡¸é ºí·°À» À§·Î ¿Ã¸°´Ù.
+			// ë§Œì•½ ë‚´ë ¤ì˜¤ëŠ” ë¸”ëŸ­ê³¼ ê²¹ì¹˜ë©´ ë¸”ëŸ­ì„ ìœ„ë¡œ ì˜¬ë¦°ë‹¤.
 			boolean up = false;
 			for (int j = 0; j < shap.getBlock().length; j++) {
 				Block sBlock = shap.getBlock(j);
@@ -817,16 +876,15 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			this.notify();
 		}
 	}
-	// popup ÀÌº¥Æ® ÇÔ¼ö , millions
+	// popup ì´ë²¤íŠ¸ í•¨ìˆ˜ , millions
 	public void GameEndPopUp() {  
-		GameEndSound = new Music("GameEndSound.mp3", false); 
+		GameEndSound = new Music("GameOver.mp3", false); 
 		GameEndSound.start();	
 		ImageIcon popupicon = new ImageIcon(TetrisMain.class.getResource("../../../Images/GAMEOVER.PNG"));
 		JOptionPane.showMessageDialog(null, null, "The End", JOptionPane.ERROR_MESSAGE, popupicon);
 	}
 
 
-	// new Music ÄÚµå millions
 	public void keyReleased(KeyEvent e) {
 	}
 
@@ -841,26 +899,34 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		if (!isPlay)
 			return;
 		if (e.getKeyCode() == button.getLeft_key()) {
-			new Music("BlockMoveSound.mp3", false).start(); // millions
+			if (usingEffect)
+				new Music("Left.mp3", false).start(); // millions
 			controller.moveLeft();
 			controllerGhost.moveLeft();
 		} else if (e.getKeyCode() == button.right_key) {
-			new Music("BlockMoveSound.mp3", false).start(); // millions
+			if (usingEffect)
+				new Music("Right.mp3", false).start(); // millions
 			controller.moveRight();
 			controllerGhost.moveRight();
 		} else if (e.getKeyCode() == button.down_key) {
-			new Music("BlockMoveSound.mp3", false).start();	// millions
+			if (usingEffect)
+				new Music("Down.mp3", false).start();	// millions
 			controller.moveDown();
 		} else if (e.getKeyCode() == button.up_key) {
-			new Music("BlockMoveSound.mp3", false).start();	// millions
+			if (usingEffect)
+				new Music("Rotation.mp3", false).start();	// millions
 			controller.nextRotationLeft();
 			controllerGhost.nextRotationLeft();
 		} else if (e.getKeyCode() == button.space_key) {
 			controller.moveQuickDown(shap.getPosY(), true);
-			new Music("BlockMoveSound.mp3", false).start();	// millions
 			this.fixingTetrisBlock();
+			
+			if (usingEffect)
+				new Music("Space.mp3", false).start();	// millions
+			
 		} else if (e.getKeyCode() == Button.shift_key) {
-			new Music("ShiftSound.mp3", false).start();		// millions
+			if (usingEffect)
+				new Music("ShiftSound.mp3", false).start();		// millions
 			playBlockHold();
 		}
 		this.showGhost();
@@ -883,18 +949,34 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	public void mouseReleased(MouseEvent e) {
 	}
 	
-	// °ÔÀÓ ¹ÂÁ÷ Å°°í ²ô±â millions
+	// ê²Œì„ ë®¤ì§ í‚¤ê³  ë„ê¸° millions
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btnStart) {
 			
-			GameMusic = new Music("GameMusic.mp3", true ); //GameMusic.start();
-			
-			if (client != null) {
-				client.gameStart((int) comboSpeed.getSelectedItem());
-			} else {
-				this.gameStart((int) comboSpeed.getSelectedItem());
+			if(GameMusic != null && GameMusic.isAlive()) {
+				GameMusic.close();
+				if(usingBGM) {
+					GameMusic = new Music("GameMusic.mp3", true );
+					GameMusic.start();
+					
+					}
+			}else {
+				if(usingBGM) {
+					GameMusic = new Music("GameMusic.mp3", true );
+					GameMusic.start();
+					
+				}
 			}
-		} else if (e.getSource() == btnExit) {
+				
+			if(client!=null){
+				client.gameStart((int)comboSpeed.getSelectedItem());
+			}else{
+				this.gameStart((int)comboSpeed.getSelectedItem());
+			}
+		}else if(e.getSource() == btnExit){
+			if(GameMusic != null && GameMusic.isAlive()) {
+				GameMusic.close();
+			}
 			if (client != null) {
 				GameMusic.close();	// millions
 				if (tetris.isNetwork()) {
@@ -907,9 +989,6 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		}
 	}
 	
-	//Music °´Ã¼ millions
-	Music GameMusic; // °ÔÀÓÇÏ´Â µµÁßÀÇ À½¾Ç
-	Music GameEndSound;// °ÔÀÓ Á¾·á ½Ã È¿°úÀ½
 
 	public boolean isPlay() {
 		return isPlay;
