@@ -46,6 +46,7 @@ import com.tetris.window.Button;
 import com.tetris.window.Sound;
 
 import static com.tetris.window.Sound.GameMusic;
+import static com.tetris.window.TetrisBoard.usingBGM;
 import static com.tetris.window.Sound.GameEndSound;
 
 public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseListener, ActionListener {
@@ -118,7 +119,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		this.addMouseListener(this);
 		this.setLayout(null);
 		this.setFocusable(true);
-
+		Sound = new Sound();
 		btnStart.setBounds(PANEL_WIDTH - BLOCK_SIZE * 7, PANEL_HEIGHT - messageArea.getHeight(), BLOCK_SIZE * 7,
 				messageArea.getHeight() / 2);
 		btnStart.setFocusable(false);
@@ -973,6 +974,8 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	// 게임 뮤직 키고 끄기 millions
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btnStart) {
+			
+			
 			if(GameMusic != null && GameMusic.isAlive()) {
 				GameMusic.close();
 				if(usingBGM) {
@@ -987,7 +990,6 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 					
 				}
 			}
-			
 			//Sound.GameMusicStart();
 				
 			if(client!=null){
@@ -997,10 +999,10 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			}
 		}else if(e.getSource() == btnExit){
 			
+			//Sound.GameExit();
 			if(GameMusic != null && GameMusic.isAlive()) {
 				GameMusic.close();
 			}
-			//Sound.GameExit();
 			
 			if (client != null) {
 				if (tetris.isNetwork()) {

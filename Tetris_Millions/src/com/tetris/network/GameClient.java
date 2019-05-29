@@ -191,13 +191,13 @@ public class GameClient implements Runnable{
 		DataShip data = new DataShip(DataShip.CLOSE_NETWORK);
 		if(isServer) data.setCommand(DataShip.SERVER_EXIT);
 		send(data);
-		if(GameMusic != null && GameMusic.isAlive()) {
-			GameMusic.close();
-		}
 	}
 	//실행하기 : 연결끊기
 	public void reCloseNetwork(){
 
+		if(GameMusic != null && GameMusic.isAlive()) {
+			GameMusic.close();
+		}
 		tetris.closeNetwork();
 		try {
 			ois.close();
@@ -268,7 +268,6 @@ public class GameClient implements Runnable{
 	public void gameover(){
 		DataShip data = new DataShip(DataShip.GAME_OVER);
 		send(data);
-		//sound.GameOver();
 		if(GameMusic != null && GameMusic.isAlive()) {
 			GameMusic.close();
 		}
@@ -276,7 +275,7 @@ public class GameClient implements Runnable{
 		GameEndSound.start();	
 		ImageIcon popupicon = new ImageIcon(TetrisMain.class.getResource("../../../Images/GAMEOVER.PNG"));
 		JOptionPane.showMessageDialog(null, null, "The End", JOptionPane.ERROR_MESSAGE, popupicon);
-
+		//sound.GameOver();
 	}
 	public void reGameover(String msg, int totalAdd){
 		tetris.printSystemMessage(msg);
