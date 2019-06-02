@@ -197,7 +197,18 @@ public class GameClient implements Runnable{
 
 		if(GameMusic != null && GameMusic.isAlive()) {
 			GameMusic.close();
+			
+			tetris.closeNetwork();
+			try {
+				ois.close();
+				oos.close();
+				socket.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+		else {
+		
 		tetris.closeNetwork();
 		try {
 			ois.close();
@@ -205,6 +216,7 @@ public class GameClient implements Runnable{
 			socket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
 		}
 	}
 	
