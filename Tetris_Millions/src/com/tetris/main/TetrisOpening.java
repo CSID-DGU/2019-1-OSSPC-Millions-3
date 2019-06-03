@@ -49,7 +49,7 @@ public class TetrisOpening extends JFrame {
       setLayout(null);
       
       
-      exitButton.setBounds(450, 0, 30, 30);
+      exitButton.setBounds(890, 0, 30, 30);
       exitButton.setBorderPainted(false);
       exitButton.setContentAreaFilled(false);
       exitButton.setFocusPainted(false);
@@ -80,7 +80,7 @@ public class TetrisOpening extends JFrame {
       add(exitButton);
       
       
-      startButton.setBounds(40, 200, 400, 100);
+      startButton.setBounds(260, 200, 400, 100);
       startButton.setBorderPainted(false);
       startButton.setContentAreaFilled(false);
       startButton.setFocusPainted(false);
@@ -110,7 +110,7 @@ public class TetrisOpening extends JFrame {
       add(startButton);
       
       
-      quitButton.setBounds(40, 330, 400, 100);
+      quitButton.setBounds(260, 280, 400, 100);
       quitButton.setBorderPainted(false);
       quitButton.setContentAreaFilled(false);
       quitButton.setFocusPainted(false);
