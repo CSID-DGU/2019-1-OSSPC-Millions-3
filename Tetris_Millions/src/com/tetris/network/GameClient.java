@@ -28,7 +28,6 @@ public class GameClient implements Runnable{
 	private Socket socket;
 	private ObjectOutputStream oos;
 	private ObjectInputStream ois;
-	
 	private Sound sound;
 
 	//서버 IP
@@ -38,6 +37,7 @@ public class GameClient implements Runnable{
 	private int index;
 	private boolean isPlay;
 	
+
 	
 	//생성자
 	public GameClient(Tetris tetris,String ip, int port, String name){
@@ -275,7 +275,6 @@ public class GameClient implements Runnable{
 	public void reSetIndex(int index){
 		this.index = index;
 	}
-	
 	//요청하기 : 게임종료
 	public void gameover(){
 		DataShip data = new DataShip(DataShip.GAME_OVER);

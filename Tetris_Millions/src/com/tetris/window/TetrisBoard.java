@@ -726,7 +726,8 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	 * TODO : 게임종료콜벡 게임이 종료되면 실행되는 메소드
 	 */
 	public void gameEndCallBack() {
-		client.gameover();
+		
+		//client.gameover();
 		this.isPlay = false;
 		if(GameMusic != null && GameMusic.isAlive()) {
 			GameMusic.close();
