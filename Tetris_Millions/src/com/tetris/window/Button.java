@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+
+
 public class Button {
    
    JLabel keyLabel;
@@ -14,7 +16,7 @@ public class Button {
    JButton[] btn = new JButton[6];
    Container contentPane;
    String keyString = null;
-   static int left_key = 37, right_key=39, down_key=40, up_key=38, space_key=32, shift_key=16, keyCode, pk=0;
+   private static int left_key = 37, right_key=39, down_key=40, up_key=38, space_key=32, shift_key=16, keyCode, pk=0;
    // »ý¼ºÀÚ
    public Button() {}
  

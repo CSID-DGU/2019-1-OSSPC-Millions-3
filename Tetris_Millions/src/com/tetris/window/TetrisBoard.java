@@ -935,50 +935,50 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	}
 
 	public void keyTyped(KeyEvent e) {
-	}
+	   }
 
-	public void keyPressed(KeyEvent e) {
-		Button button = new Button();
-		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-			messageArea.requestFocus();
-		}
-		if (!isPlay)
-			return;
-		if (e.getKeyCode() == button.getLeft_key()) {
-			if (usingEffect)
-				new Music("Left.mp3", false).start(); // millions
-			controller.moveLeft();
-			controllerGhost.moveLeft();
-		} else if (e.getKeyCode() == button.right_key) {
-			if (usingEffect)
-				new Music("Right.mp3", false).start(); // millions
-			controller.moveRight();
-			controllerGhost.moveRight();
-		} else if (e.getKeyCode() == button.down_key) {
-			if (usingEffect)
-				new Music("Down.mp3", false).start();	// millions
-			controller.moveDown();
-		} else if (e.getKeyCode() == button.up_key) {
-			if (usingEffect)
-				new Music("Rotation.mp3", false).start();	// millions
-			controller.nextRotationLeft();
-			controllerGhost.nextRotationLeft();
-		} else if (e.getKeyCode() == button.space_key) {
-			controller.moveQuickDown(shap.getPosY(), true);
-			this.fixingTetrisBlock();
-			
-			if (usingEffect)
-				new Music("Space.mp3", false).start();	// millions
-			
-		} else if (e.getKeyCode() == Button.shift_key) {
-			playBlockHold();
-		}
+	   public void keyPressed(KeyEvent e) {
+	      Button button = new Button();
+	      if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+	         messageArea.requestFocus();
+	      }
+	      if (!isPlay)
+	         return;
+	      if (e.getKeyCode() == button.getLeft_key()) {
+	         if (usingEffect)
+	            new Music("Left.mp3", false).start(); // millions
+	         controller.moveLeft();
+	         controllerGhost.moveLeft();
+	      } else if (e.getKeyCode() == button.getRight_key()) {
+	         if (usingEffect)
+	            new Music("Right.mp3", false).start(); // millions
+	         controller.moveRight();
+	         controllerGhost.moveRight();
+	      } else if (e.getKeyCode() == button.getDown_key()) {
+	         if (usingEffect)
+	            new Music("Down.mp3", false).start();   // millions
+	         controller.moveDown();
+	      } else if (e.getKeyCode() == button.getUp_key()) {
+	         if (usingEffect)
+	            new Music("Rotation.mp3", false).start();   // millions
+	         controller.nextRotationLeft();
+	         controllerGhost.nextRotationLeft();
+	      } else if (e.getKeyCode() == button.getSpace_key()) {
+	         controller.moveQuickDown(shap.getPosY(), true);
+	         this.fixingTetrisBlock();
+	         
+	         if (usingEffect)
+	            new Music("Space.mp3", false).start();   // millions
+	         
+	      } else if (e.getKeyCode() == button.getShift_key()) {
+	         playBlockHold();
+	      }
 
-		this.getClient().drawBlockShap(controller.getBlock());//HK
-		this.getClient().drawBlockDeposit(blockList);//HK
-		this.showGhost();
-		this.repaint();
-	}
+	      this.getClient().drawBlockShap(controller.getBlock());//HK
+	      this.getClient().drawBlockDeposit(blockList);//HK
+	      this.showGhost();
+	      this.repaint();
+	   }
 
 	public void mouseClicked(MouseEvent e) {
 	}
