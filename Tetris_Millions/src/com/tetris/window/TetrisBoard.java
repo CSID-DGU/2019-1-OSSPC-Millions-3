@@ -169,7 +169,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		// 버튼 효과음 millions
 		
 		checkGhost.setBounds(PANEL_WIDTH - BLOCK_SIZE * 12 + 35, 5, 95, 20);		//고스트모드 checkbox 왼쪽으로 이동.(millions)
-		checkGhost.setBackground(new Color(196, 240, 180));
+		checkGhost.setBackground(Color.white);
 		checkGhost.setForeground(Color.black);
 		checkGhost.setFont(new Font("굴림", Font.BOLD, 13));
 		checkGhost.addChangeListener(new ChangeListener() {
@@ -181,7 +181,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			}
 		});
 		checkGrid.setBounds(PANEL_WIDTH - BLOCK_SIZE * 12 + 35, 25, 95, 20);		//격자모드 checkbox 왼쪽으로 이동.(millions)
-		checkGrid.setBackground(new Color(196, 240, 180));
+		checkGrid.setBackground(Color.white);
 		checkGrid.setForeground(Color.black);
 		checkGrid.setFont(new Font("굴림", Font.BOLD, 13));
 		checkGrid.addChangeListener(new ChangeListener() {
@@ -194,7 +194,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		});
 
 		checkEffect.setBounds(PANEL_WIDTH - BLOCK_SIZE * 7 + 35, 5, 95, 20);		//효과음 checkbox 위치 및 디자인(millions)
-		checkEffect.setBackground(new Color(196, 240, 180));
+		checkEffect.setBackground(Color.white);
 		checkEffect.setForeground(Color.black);
 		checkEffect.setFont(new Font("굴림", Font.BOLD, 13));
 		checkEffect.setRequestFocusEnabled(false);
@@ -213,7 +213,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		});
 		
 		checkBGM.setBounds(PANEL_WIDTH - BLOCK_SIZE * 7 + 35, 25, 95, 20);			//배경음악 checkbox 위치 및 디자인(millions)
-		checkBGM.setBackground(new Color(196, 240, 180));
+		checkBGM.setBackground(Color.white);
 		checkBGM.setForeground(Color.black);
 		checkBGM.setFont(new Font("굴림", Font.BOLD, 13));
 		checkBGM.setRequestFocusEnabled(false);
@@ -312,15 +312,16 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	protected void paintComponent(Graphics g) {
 		g.clearRect(0, 0, this.getWidth(), this.getHeight() + 1);
 
-		g.setColor(new Color(196, 240, 180));
+		/*g.setColor(new Color(196, 240, 180));
 		g.fillRect(0, 0, 2*(2*BOARD_X+maxX*BLOCK_SIZE)+50, BOARD_Y);
 
 		g.setColor(new Color(196, 240, 180));
 		g.fillRect(0, BOARD_Y, 2*(2*BOARD_X+maxX*BLOCK_SIZE)+50, maxY*BLOCK_SIZE);
-		g.setColor(Color.black);
+		*/
 		
-		//g.drawImage(icon1.getImage(),0,0,null);
+		g.drawImage(icon1.getImage(),0,0,null);
 
+		g.setColor(Color.black);
 		// IP 출력
 		g.drawString("ip : " + ip + "     port : " + port, 20, 20);
 
@@ -365,7 +366,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		}
 		
 		
-		g.drawLine(this.getWidth()/2 + 10 , BOARD_Y, this.getWidth()/2 + 10, BOARD_Y+maxY*BLOCK_SIZE);
+		g.drawLine(this.getWidth()/2 + 10 , BOARD_Y + 20, this.getWidth()/2  + 10, BOARD_Y+maxY*BLOCK_SIZE);
 		
 		// <<2p 화면>>
 				// 까만 배경 부분
