@@ -114,6 +114,9 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	public ImageIcon icon1;
 	public ImageIcon icon2;
 	
+	public int myScore = 0;
+	
+	Graphics buff; // 더블버퍼링을 위한 버퍼
 
 
 	public TetrisBoard(Tetris tetris, GameClient client) {
@@ -347,7 +350,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		g.setColor(Color.black);
 		g.setFont(new Font(font.getFontName(),font.getStyle(),20));
 		g.drawString("MY SCORE", BOARD_X + BLOCK_SIZE + (maxX+1)*BLOCK_SIZE+1 + 120, BOARD_Y + 50 );
-		
+		g.drawString(" " + myScore, BOARD_X + BLOCK_SIZE + (maxX+1)*BLOCK_SIZE+1 + 170, BOARD_Y + 80 );
 		
 		
 		//그리드 표시
@@ -465,6 +468,8 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			e.printStackTrace();
 		} //repaint_drawBlock
 	}
+
+
 	/* 상대 블록 그리기 HK */
 	
 	public void drawBlockShap(TetrisBlock shap, Graphics g) {
@@ -697,6 +702,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			// block의 해당 line을 지운다.
 			if (count == maxX) {
 				removeLineCount++;
+				myScore+=100;
 				this.removeBlockLine(mainBlock.getY());
 				isCombo = true;
 			}
@@ -994,7 +1000,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btnStart) {
 			
-			
+			myScore = 0;
 			if(GameMusic != null && GameMusic.isAlive()) {
 				GameMusic.close();
 				if(usingBGM) {
