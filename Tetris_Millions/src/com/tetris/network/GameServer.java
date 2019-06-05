@@ -118,10 +118,12 @@ class GameHandler extends Thread{
 			broadcast(data);
 		}
 		public void drawBlockShap(TetrisBlock shap, int player) {
+			synchronized(DataShip.class) {
 			DataShip data = new DataShip(DataShip.DRAW_BLOCK_SHAP);
 			data.setShap(shap);
 			data.setPlayer(player);
 			broadcast(data);
+			}
 		}//drawBlockShap
 		public void drawBlockDeposit(ArrayList<Block> blockList2) {
 			DataShip data = new DataShip(DataShip.DRAW_BLOCK_DEPOSIT);
@@ -129,10 +131,12 @@ class GameHandler extends Thread{
 			broadcast(data);
 		}
 		public void drawBlockDeposit(ArrayList<Block> blockList2, int player) {
+			synchronized(DataShip.class) {
 			DataShip data = new DataShip(DataShip.DRAW_BLOCK_DEPOSIT);
 			data.setDeposit(blockList2);
 			data.setPlayer(player);
 			broadcast(data);
+			}
 		}
 		
 	
