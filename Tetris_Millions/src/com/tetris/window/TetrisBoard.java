@@ -114,8 +114,6 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	public ImageIcon icon1;
 	public ImageIcon icon2;
 	
-	
-	JLabel MyScore;
 
 
 	public TetrisBoard(Tetris tetris, GameClient client) {
@@ -349,6 +347,8 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		g.setColor(Color.black);
 		g.setFont(new Font(font.getFontName(),font.getStyle(),20));
 		g.drawString("MY SCORE", BOARD_X + BLOCK_SIZE + (maxX+1)*BLOCK_SIZE+1 + 120, BOARD_Y + 50 );
+		
+		
 		
 		//그리드 표시
 		if(usingGrid){
