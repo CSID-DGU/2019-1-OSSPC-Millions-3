@@ -9,7 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;	// millions
+import java.awt.event.MouseAdapter; // millions
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -17,11 +17,11 @@ import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import javax.swing.ImageIcon;		// millions
+import javax.swing.ImageIcon; // millions
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JOptionPane;		//millions
+import javax.swing.JOptionPane; //millions
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -31,7 +31,7 @@ import com.tetris.classes.Block;
 import com.tetris.classes.TetrisBlock;
 import com.tetris.controller.TetrisController;
 
-import com.tetris.main.Music;	// millions
+import com.tetris.main.Music; // millions
 import com.tetris.main.TetrisMain;
 import com.tetris.network.DataShip;
 import com.tetris.network.GameClient;
@@ -44,12 +44,6 @@ import com.tetris.shape.Nemo;
 import com.tetris.shape.RightTwoUp;
 import com.tetris.shape.RightUp;
 import com.tetris.window.Button;
-import com.tetris.window.Sound;
-
-
-import static com.tetris.window.Sound.GameMusic;
-import static com.tetris.window.TetrisBoard.usingBGM;
-import static com.tetris.window.Sound.GameEndSound;
 
 public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseListener, ActionListener {
 	private static final long serialVersionUID = 1L;
@@ -63,21 +57,24 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	private static int minX = 1, minY = 0, maxX = 10, maxY = 21, down = 50, up = 0;
 	private static final int MESSAGE_WIDTH = BLOCK_SIZE * 7;
 	private static final int MESSAGE_HEIGHT = BLOCK_SIZE * 6;
-	public static final int PANEL_WIDTH = 2 * ( maxX * BLOCK_SIZE + MESSAGE_WIDTH + BOARD_X);
+	public static final int PANEL_WIDTH = 2 * (maxX * BLOCK_SIZE + MESSAGE_WIDTH + BOARD_X);
 	public static final int PANEL_HEIGHT = maxY * BLOCK_SIZE + MESSAGE_HEIGHT + BOARD_Y;
 
-	private SystemMessageArea systemMsg = new SystemMessageArea(BLOCK_SIZE * 1, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE * 7,BLOCK_SIZE * 5, BLOCK_SIZE * 12);
-	private MessageArea messageArea = new MessageArea(this,0, PANEL_HEIGHT - MESSAGE_HEIGHT, PANEL_WIDTH-BLOCK_SIZE*7, MESSAGE_HEIGHT);
+	private SystemMessageArea systemMsg = new SystemMessageArea(BLOCK_SIZE * 1, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE * 7,
+			BLOCK_SIZE * 5, BLOCK_SIZE * 12);
+	private MessageArea messageArea = new MessageArea(this, 0, PANEL_HEIGHT - MESSAGE_HEIGHT,
+			PANEL_WIDTH - BLOCK_SIZE * 7, MESSAGE_HEIGHT);
 	private JButton btnStart = new JButton("시작하기");
 	private JButton btnExit = new JButton("나가기");
+	private JButton btnSound1 = new JButton("BGM1");
+	private JButton btnSound2 = new JButton("BGM2");
+	private JButton btnSound3 = new JButton("BGM3");
 	private JCheckBox checkGhost = new JCheckBox("고스트모드", true);
 	private JCheckBox checkGrid = new JCheckBox("격자 표시", true);
-	
-	
-	private JCheckBox checkEffect = new JCheckBox("효과음", true);					// 효과음 checkbox (millions)
-	private JCheckBox checkBGM = new JCheckBox("배경음악", true);						// 배경음악 checkbox (millions)
-	
-	
+
+	private JCheckBox checkEffect = new JCheckBox("효과음", true); // 효과음 checkbox (millions)
+	private JCheckBox checkBGM = new JCheckBox("배경음악", true); // 배경음악 checkbox (millions)
+
 	private Integer[] lv = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
 	private JComboBox<Integer> comboSpeed = new JComboBox<Integer>(lv);
 
@@ -94,30 +91,30 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	private TetrisController controller;
 	private TetrisController controllerGhost;
 
-	private TetrisBlock shap2;//HK
-	private ArrayList<Block> blockList2;//HK
-	
+	private TetrisBlock shap2;// HK
+	private ArrayList<Block> blockList2;// HK
+
 	private boolean isPlay = false;
 	private boolean isHold = false;
 	private boolean usingGhost = true;
 	private boolean usingGrid = true;
-	
-	
-	public static boolean usingEffect = true;							// 효과음 (millions)
-	public static boolean usingBGM = true;							// 배경음악 (millions)
-	
-	
+
+	public static boolean usingEffect = true; // 효과음 (millions)
+	public static boolean usingBGM = true; // 배경음악 (millions)
+
 	private int removeLineCount = 0;
 	private int removeLineCombo = 0;
-	
-	public Sound Sound;
+
 	public ImageIcon icon1;
 	public ImageIcon icon2;
-	
+
 	public int myScore = 0;
-	
+
 	Graphics buff; // 더블버퍼링을 위한 버퍼
 
+	public static Music GameMusic;
+	public static Music GameEndSound;
+	public int SoundNumber = 1; // 음악 구부늘 위한 번호
 
 	public TetrisBoard(Tetris tetris, GameClient client) {
 		this.tetris = tetris;
@@ -127,48 +124,58 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		this.addMouseListener(this);
 		this.setLayout(null);
 		this.setFocusable(true);
-		Sound = new Sound();
 		btnStart.setBounds(PANEL_WIDTH - BLOCK_SIZE * 7, PANEL_HEIGHT - messageArea.getHeight(), BLOCK_SIZE * 7,
 				messageArea.getHeight() / 2);
 		btnStart.setFocusable(false);
 		btnStart.setEnabled(false);
 		btnStart.addActionListener(this);
-		
-		btnStart.addMouseListener(new MouseAdapter(){
+
+		btnStart.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
 				Music MousePressedSound = new Music("Start.mp3", false);
 				MousePressedSound.start();
 			}
+
 			public void mouseEntered(MouseEvent e) {
 				Music MousePressedSound = new Music("BlockMoveSound.mp3", false);
 				MousePressedSound.start();
 			}
-		
-			
-			
+
 		}); // 버튼 효과음 millions
-		
+
 		btnExit.setBounds(PANEL_WIDTH - BLOCK_SIZE * 7, PANEL_HEIGHT - messageArea.getHeight() / 2, BLOCK_SIZE * 7,
 				messageArea.getHeight() / 2);
 		btnExit.setFocusable(false);
 		btnExit.addActionListener(this);
 
-		btnExit.addMouseListener(new MouseAdapter(){
+		btnExit.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
 				Music MousePressedSound = new Music("Exit.mp3", false);
 				MousePressedSound.start();
 			}
-			
+
 			public void mouseEntered(MouseEvent e) {
 				Music MousePressedSound = new Music("BlockMoveSound.mp3", false);
 				MousePressedSound.start();
 			}
-			
+
 		});
-		
+
+		btnSound1.setBounds(PANEL_WIDTH - BLOCK_SIZE * 7 + 35, 45, 95, 20);
+		btnSound1.setFocusable(false);
+		btnSound1.addActionListener(this);
+
+		btnSound2.setBounds(PANEL_WIDTH - BLOCK_SIZE * 7 + 35, 65, 95, 20);
+		btnSound2.setFocusable(false);
+		btnSound2.addActionListener(this);
+
+		btnSound3.setBounds(PANEL_WIDTH - BLOCK_SIZE * 7 + 35, 85, 95, 20);
+		btnSound3.setFocusable(false);
+		btnSound3.addActionListener(this);
+
 		// 버튼 효과음 millions
-		
-		checkGhost.setBounds(PANEL_WIDTH - BLOCK_SIZE * 12 + 35, 5, 95, 20);		//고스트모드 checkbox 왼쪽으로 이동.(millions)
+
+		checkGhost.setBounds(PANEL_WIDTH - BLOCK_SIZE * 12 + 35, 5, 95, 20); // 고스트모드 checkbox 왼쪽으로 이동.(millions)
 		checkGhost.setBackground(Color.white);
 		checkGhost.setForeground(Color.black);
 		checkGhost.setFont(new Font("굴림", Font.BOLD, 13));
@@ -180,7 +187,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 				TetrisBoard.this.repaint();
 			}
 		});
-		checkGrid.setBounds(PANEL_WIDTH - BLOCK_SIZE * 12 + 35, 25, 95, 20);		//격자모드 checkbox 왼쪽으로 이동.(millions)
+		checkGrid.setBounds(PANEL_WIDTH - BLOCK_SIZE * 12 + 35, 25, 95, 20); // 격자모드 checkbox 왼쪽으로 이동.(millions)
 		checkGrid.setBackground(Color.white);
 		checkGrid.setForeground(Color.black);
 		checkGrid.setFont(new Font("굴림", Font.BOLD, 13));
@@ -193,26 +200,26 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			}
 		});
 
-		checkEffect.setBounds(PANEL_WIDTH - BLOCK_SIZE * 7 + 35, 5, 95, 20);		//효과음 checkbox 위치 및 디자인(millions)
+		checkEffect.setBounds(PANEL_WIDTH - BLOCK_SIZE * 7 + 35, 5, 95, 20); // 효과음 checkbox 위치 및 디자인(millions)
 		checkEffect.setBackground(Color.white);
 		checkEffect.setForeground(Color.black);
 		checkEffect.setFont(new Font("굴림", Font.BOLD, 13));
 		checkEffect.setRequestFocusEnabled(false);
 		checkEffect.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (checkEffect.isSelected() == true) {
 					usingEffect = true;
 				} else {
 					usingEffect = false;
-				}		
+				}
 				TetrisBoard.this.setRequestFocusEnabled(true);
 				TetrisBoard.this.repaint();
 			}
 		});
-		
-		checkBGM.setBounds(PANEL_WIDTH - BLOCK_SIZE * 7 + 35, 25, 95, 20);			//배경음악 checkbox 위치 및 디자인(millions)
+
+		checkBGM.setBounds(PANEL_WIDTH - BLOCK_SIZE * 7 + 35, 25, 95, 20); // 배경음악 checkbox 위치 및 디자인(millions)
 		checkBGM.setBackground(Color.white);
 		checkBGM.setForeground(Color.black);
 		checkBGM.setFont(new Font("굴림", Font.BOLD, 13));
@@ -223,39 +230,58 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 				if (checkBGM.isSelected() == true) {
 
 					usingBGM = true;
-					if(GameMusic.isAlive() && GameMusic != null) {
+					if (GameMusic.isAlive() && GameMusic != null) {
 						GameMusic.close();
-						GameMusic = new Music("GameMusic.mp3", true );
-						GameMusic.start();
-					}else {
-						GameMusic = new Music("GameMusic.mp3", true );
-						GameMusic.start();
+						if (SoundNumber == 1) {
+							GameMusic = new Music("GameMusic1.mp3", true);
+							GameMusic.start();
+						} else if (SoundNumber == 2) {
+							GameMusic = new Music("GameMusic2.mp3", true);
+							GameMusic.start();
+						} else if (SoundNumber == 3) {
+							GameMusic = new Music("GameMusic3.mp3", true);
+							GameMusic.start();
+						} 
+					} else {
+						if (SoundNumber == 1) {
+							GameMusic = new Music("GameMusic1.mp3", true);
+							GameMusic.start();
+						} else if (SoundNumber == 2) {
+							GameMusic = new Music("GameMusic2.mp3", true);
+							GameMusic.start();
+						} else if (SoundNumber == 3) {
+							GameMusic = new Music("GameMusic3.mp3", true);
+							GameMusic.start();
+						} 
 					}
 				} else {
 					usingBGM = false;
-					if(GameMusic != null && GameMusic.isAlive()) {
+					if (GameMusic != null && GameMusic.isAlive()) {
 						GameMusic.close();
 					}
-					
-				}	
+
+				}
 				TetrisBoard.this.setRequestFocusEnabled(true);
 				TetrisBoard.this.repaint();
 			}
 		});
-		
-		comboSpeed.setBounds(PANEL_WIDTH - BLOCK_SIZE * 13, 5, 45, 20); 			// 속도 숫자 표시 왼쪽으로 이동.(millions)
+
+		comboSpeed.setBounds(PANEL_WIDTH - BLOCK_SIZE * 13, 5, 45, 20); // 속도 숫자 표시 왼쪽으로 이동.(millions)
 		this.add(comboSpeed);
 
 		this.add(systemMsg);
 		this.add(messageArea);
 		this.add(btnStart);
 		this.add(btnExit);
+		this.add(btnSound1);
+		this.add(btnSound2);
+		this.add(btnSound3);
 		this.add(checkGhost);
 		this.add(checkGrid);
-		
-		this.add(checkEffect);														//효과음(millions)
-		this.add(checkBGM);	///배경음악(millions)
-		
+
+		this.add(checkEffect); // 효과음(millions)
+		this.add(checkBGM); /// 배경음악(millions)
+
 		icon1 = new ImageIcon(TetrisMain.class.getResource("../../../Images/GameBackground.jpg"));
 
 	}
@@ -276,12 +302,45 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		// 돌고 있을 스레드를 정지시킨다.
 		if (th != null) {
 			try {
-				isPlay = false;;
+				isPlay = false;
+				;
 				th.join();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
+		if (GameMusic != null && GameMusic.isAlive()) {
+			GameMusic.close();
+			if (usingBGM) {
+				if (SoundNumber == 1) {
+					GameMusic = new Music("GameMusic1.mp3", true);
+					GameMusic.start();
+				} else if (SoundNumber == 2) {
+					GameMusic = new Music("GameMusic2.mp3", true);
+					GameMusic.start();
+				} else if (SoundNumber == 3) {
+					GameMusic = new Music("GameMusic3.mp3", true);
+					GameMusic.start();
+				}
+
+			}
+		} else {
+			if (usingBGM) {
+				if (SoundNumber == 1) {
+					GameMusic = new Music("GameMusic1.mp3", true);
+					GameMusic.start();
+				} else if (SoundNumber == 2) {
+					GameMusic = new Music("GameMusic2.mp3", true);
+					GameMusic.start();
+				} else if (SoundNumber == 3) {
+					GameMusic = new Music("GameMusic3.mp3", true);
+					GameMusic.start();
+				}
+
+			}
+		}
+
+		myScore = 0;
 
 		// 맵셋팅
 		map = new Block[maxY][maxX];
@@ -312,14 +371,15 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	protected void paintComponent(Graphics g) {
 		g.clearRect(0, 0, this.getWidth(), this.getHeight() + 1);
 
-		/*g.setColor(new Color(196, 240, 180));
-		g.fillRect(0, 0, 2*(2*BOARD_X+maxX*BLOCK_SIZE)+50, BOARD_Y);
+		/*
+		 * g.setColor(new Color(196, 240, 180)); g.fillRect(0, 0,
+		 * 2*(2*BOARD_X+maxX*BLOCK_SIZE)+50, BOARD_Y);
+		 * 
+		 * g.setColor(new Color(196, 240, 180)); g.fillRect(0, BOARD_Y,
+		 * 2*(2*BOARD_X+maxX*BLOCK_SIZE)+50, maxY*BLOCK_SIZE);
+		 */
 
-		g.setColor(new Color(196, 240, 180));
-		g.fillRect(0, BOARD_Y, 2*(2*BOARD_X+maxX*BLOCK_SIZE)+50, maxY*BLOCK_SIZE);
-		*/
-		
-		g.drawImage(icon1.getImage(),0,0,null);
+		g.drawImage(icon1.getImage(), 0, 0, null);
 
 		g.setColor(Color.black);
 		// IP 출력
@@ -335,56 +395,73 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		g.setFont(font);
 
 		g.setColor(Color.white);
-		g.fillRect(BOARD_X + BLOCK_SIZE*minX, BOARD_Y, maxX*BLOCK_SIZE+1, maxY*BLOCK_SIZE+1);
-		g.fillRect(BLOCK_SIZE*minX ,BOARD_Y + BLOCK_SIZE, BLOCK_SIZE*5,BLOCK_SIZE*5);
-		g.fillRect(BOARD_X + BLOCK_SIZE*minX + (maxX+1)*BLOCK_SIZE+1,BOARD_Y + BLOCK_SIZE, BLOCK_SIZE*5,BLOCK_SIZE*5);
-		g.fillRect(BOARD_X + BLOCK_SIZE*minX + (maxX+1)*BLOCK_SIZE+1,BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*7, BLOCK_SIZE*5,BLOCK_SIZE*12);
-		
-		//HOLD  NEXT 출력
+		g.fillRect(BOARD_X + BLOCK_SIZE * minX, BOARD_Y, maxX * BLOCK_SIZE + 1, maxY * BLOCK_SIZE + 1);
+		g.fillRect(BLOCK_SIZE * minX, BOARD_Y + BLOCK_SIZE, BLOCK_SIZE * 5, BLOCK_SIZE * 5);
+		g.fillRect(BOARD_X + BLOCK_SIZE * minX + (maxX + 1) * BLOCK_SIZE + 1, BOARD_Y + BLOCK_SIZE, BLOCK_SIZE * 5,
+				BLOCK_SIZE * 5);
+		g.fillRect(BOARD_X + BLOCK_SIZE * minX + (maxX + 1) * BLOCK_SIZE + 1, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE * 7,
+				BLOCK_SIZE * 5, BLOCK_SIZE * 12);
+
+		// HOLD NEXT 출력
 		g.setColor(Color.black);
-		g.setFont(new Font(font.getFontName(),font.getStyle(),20));
-		g.drawString("H O L D", BLOCK_SIZE + 12, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*5 + 20);
-		g.drawString("N E X T", BOARD_X + BLOCK_SIZE + (maxX+1)*BLOCK_SIZE+1 + 12, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE*5 + 20);
+		g.setFont(new Font(font.getFontName(), font.getStyle(), 20));
+		g.drawString("H O L D", BLOCK_SIZE + 12, BOARD_Y + BLOCK_SIZE + BLOCK_SIZE * 5 + 20);
+		g.drawString("N E X T", BOARD_X + BLOCK_SIZE + (maxX + 1) * BLOCK_SIZE + 1 + 12,
+				BOARD_Y + BLOCK_SIZE + BLOCK_SIZE * 5 + 20);
 		g.setFont(font);
-		
-		//score 출력
+
+		// score 출력
 		g.setColor(Color.black);
-		g.setFont(new Font(font.getFontName(),font.getStyle(),20));
-		g.drawString("MY SCORE", BOARD_X + BLOCK_SIZE + (maxX+1)*BLOCK_SIZE+1 + 120, BOARD_Y + 50 );
-		g.drawString(" " + myScore, BOARD_X + BLOCK_SIZE + (maxX+1)*BLOCK_SIZE+1 + 170, BOARD_Y + 80 );
-		
-		
-		//그리드 표시
-		if(usingGrid){
+		g.setFont(new Font(font.getFontName(), font.getStyle(), 20));
+		g.drawString("MY SCORE", BOARD_X + BLOCK_SIZE + (maxX + 1) * BLOCK_SIZE + 1 + 120, BOARD_Y + 50);
+		g.drawString(" " + myScore, BOARD_X + BLOCK_SIZE + (maxX + 1) * BLOCK_SIZE + 1 + 170, BOARD_Y + 80);
+
+		// 그리드 표시
+		if (usingGrid) {
 			g.setColor(Color.DARK_GRAY);
-			for(int i=1;i<maxY;i++) g.drawLine(BOARD_X + BLOCK_SIZE*minX, BOARD_Y+BLOCK_SIZE*(i+minY), BOARD_X + (maxX+minX)*BLOCK_SIZE, BOARD_Y+BLOCK_SIZE*(i+minY));
-			for(int i=1;i<maxX;i++) g.drawLine(BOARD_X + BLOCK_SIZE*(i+minX), BOARD_Y+BLOCK_SIZE*minY, BOARD_X + BLOCK_SIZE*(i+minX), BOARD_Y+BLOCK_SIZE*(minY+maxY));
-			for(int i=1;i<5;i++) g.drawLine(BLOCK_SIZE*minX ,BOARD_Y + BLOCK_SIZE*(i+1), BLOCK_SIZE*(minX+5)-1,BOARD_Y + BLOCK_SIZE*(i+1));
-			for(int i=1;i<5;i++) g.drawLine(BLOCK_SIZE*(minY+i+1) ,BOARD_Y + BLOCK_SIZE, BLOCK_SIZE*(minY+i+1),BOARD_Y + BLOCK_SIZE*(minY+6)-1);
-			for(int i=1;i<5;i++) g.drawLine(BOARD_X + BLOCK_SIZE*minX + (maxX+1)*BLOCK_SIZE+1, BOARD_Y + BLOCK_SIZE*(i+1), BOARD_X + BLOCK_SIZE*minX + (maxX+1)*BLOCK_SIZE+BLOCK_SIZE*5,BOARD_Y + BLOCK_SIZE*(i+1));
-			for(int i=1;i<5;i++) g.drawLine(BOARD_X + BLOCK_SIZE*minX + (maxX+1+i)*BLOCK_SIZE+1, BOARD_Y + BLOCK_SIZE, BOARD_X + BLOCK_SIZE*minX + BLOCK_SIZE+BLOCK_SIZE*(10+i)+1,BOARD_Y + BLOCK_SIZE*6-1);	
+			for (int i = 1; i < maxY; i++)
+				g.drawLine(BOARD_X + BLOCK_SIZE * minX, BOARD_Y + BLOCK_SIZE * (i + minY),
+						BOARD_X + (maxX + minX) * BLOCK_SIZE, BOARD_Y + BLOCK_SIZE * (i + minY));
+			for (int i = 1; i < maxX; i++)
+				g.drawLine(BOARD_X + BLOCK_SIZE * (i + minX), BOARD_Y + BLOCK_SIZE * minY,
+						BOARD_X + BLOCK_SIZE * (i + minX), BOARD_Y + BLOCK_SIZE * (minY + maxY));
+			for (int i = 1; i < 5; i++)
+				g.drawLine(BLOCK_SIZE * minX, BOARD_Y + BLOCK_SIZE * (i + 1), BLOCK_SIZE * (minX + 5) - 1,
+						BOARD_Y + BLOCK_SIZE * (i + 1));
+			for (int i = 1; i < 5; i++)
+				g.drawLine(BLOCK_SIZE * (minY + i + 1), BOARD_Y + BLOCK_SIZE, BLOCK_SIZE * (minY + i + 1),
+						BOARD_Y + BLOCK_SIZE * (minY + 6) - 1);
+			for (int i = 1; i < 5; i++)
+				g.drawLine(BOARD_X + BLOCK_SIZE * minX + (maxX + 1) * BLOCK_SIZE + 1, BOARD_Y + BLOCK_SIZE * (i + 1),
+						BOARD_X + BLOCK_SIZE * minX + (maxX + 1) * BLOCK_SIZE + BLOCK_SIZE * 5,
+						BOARD_Y + BLOCK_SIZE * (i + 1));
+			for (int i = 1; i < 5; i++)
+				g.drawLine(BOARD_X + BLOCK_SIZE * minX + (maxX + 1 + i) * BLOCK_SIZE + 1, BOARD_Y + BLOCK_SIZE,
+						BOARD_X + BLOCK_SIZE * minX + BLOCK_SIZE + BLOCK_SIZE * (10 + i) + 1,
+						BOARD_Y + BLOCK_SIZE * 6 - 1);
 		}
-		
-		
-		g.drawLine(this.getWidth()/2 + 10 , BOARD_Y + 20, this.getWidth()/2  + 10, BOARD_Y+maxY*BLOCK_SIZE);
-		
+
+		g.drawLine(this.getWidth() / 2 + 10, BOARD_Y + 20, this.getWidth() / 2 + 10, BOARD_Y + maxY * BLOCK_SIZE);
+
 		// <<2p 화면>>
-				// 까만 배경 부분
-				g.setColor(Color.white);
-				// 가운데
-				g.fillRect(3*BOARD_X+maxX*BLOCK_SIZE +(2*BLOCK_SIZE), BOARD_Y, maxX*BLOCK_SIZE+1, maxY*BLOCK_SIZE);
-			
-			
-		
-		//그리드 표시
-		if(usingGrid){
+		// 까만 배경 부분
+		g.setColor(Color.white);
+		// 가운데
+		g.fillRect(3 * BOARD_X + maxX * BLOCK_SIZE + (2 * BLOCK_SIZE), BOARD_Y, maxX * BLOCK_SIZE + 1,
+				maxY * BLOCK_SIZE);
+
+		// 그리드 표시
+		if (usingGrid) {
 			g.setColor(Color.darkGray);
 			// 가운데 가로줄
-			for(int i=1;i<maxY;i++) 
-				g.drawLine(3*BOARD_X+maxX*BLOCK_SIZE+(2*BLOCK_SIZE), BOARD_Y+BLOCK_SIZE*i, 3*BOARD_X + 2*maxX*BLOCK_SIZE+(2*BLOCK_SIZE),BOARD_Y + BLOCK_SIZE*i);
+			for (int i = 1; i < maxY; i++)
+				g.drawLine(3 * BOARD_X + maxX * BLOCK_SIZE + (2 * BLOCK_SIZE), BOARD_Y + BLOCK_SIZE * i,
+						3 * BOARD_X + 2 * maxX * BLOCK_SIZE + (2 * BLOCK_SIZE), BOARD_Y + BLOCK_SIZE * i);
 			// 가운데 세로줄
-			for(int i=1;i<maxX;i++) 
-				g.drawLine(3*BOARD_X+maxX*BLOCK_SIZE+ BLOCK_SIZE*i+(2*BLOCK_SIZE), BOARD_Y, 3*BOARD_X+maxX*BLOCK_SIZE + BLOCK_SIZE*i+(2*BLOCK_SIZE), BOARD_Y + maxY*BLOCK_SIZE);
+			for (int i = 1; i < maxX; i++)
+				g.drawLine(3 * BOARD_X + maxX * BLOCK_SIZE + BLOCK_SIZE * i + (2 * BLOCK_SIZE), BOARD_Y,
+						3 * BOARD_X + maxX * BLOCK_SIZE + BLOCK_SIZE * i + (2 * BLOCK_SIZE),
+						BOARD_Y + maxY * BLOCK_SIZE);
 		}
 
 		int x = 0, y = 0, newY = 0;
@@ -400,7 +477,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			hold.setPosX(x);
 			hold.setPosY(y);
 		}
-		
+
 		if (nextBlocks != null) {
 			x = 0;
 			y = 0;
@@ -461,44 +538,43 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			shap.setPosX(x);
 			shap.setPosY(y);
 		}
-		
+
 		try {
 			drawBlockShap(shap2, g);
-			drawBlockDeposit(blockList2,g);
-		}catch(NullPointerException e) {
+			drawBlockDeposit(blockList2, g);
+		} catch (NullPointerException e) {
 			e.printStackTrace();
-		} //repaint_drawBlock
+		} // repaint_drawBlock
 	}
 
-
 	/* 상대 블록 그리기 HK */
-	
+
 	public void drawBlockShap(TetrisBlock shap, Graphics g) {
-		if(shap != null) {
-			int x= 0, y = 0;
+		if (shap != null) {
+			int x = 0, y = 0;
 			x = shap.getPosX();
 			y = shap.getPosY();
-			shap.setPosX(x+24);
+			shap.setPosX(x + 24);
 			shap.setPosY(y);
 			shap.drawBlock(g);
 			shap.setPosX(x);
 			shap.setPosY(y);
 		}
 	}
-	
+
 	public void drawBlockShap(TetrisBlock shap) {
 		drawBlockShap(shap, getGraphics());
-	}//drawBlockShap
-	
+	}// drawBlockShap
+
 	public void drawBlockDeposit(ArrayList<Block> blockList, Graphics g) {
-		if(blockList!=null){
-			
-			int x=0, y=0;
-			for(int i = 0 ; i<blockList.size() ; i++){
+		if (blockList != null) {
+
+			int x = 0, y = 0;
+			for (int i = 0; i < blockList.size(); i++) {
 				Block block = blockList.get(i);
 				x = block.getPosGridX();
 				y = block.getPosGridY();
-				block.setPosGridX(x+24);
+				block.setPosGridX(x + 24);
 				block.setPosGridY(y);
 				block.drawColorBlock(g);
 				block.setPosGridX(x);
@@ -506,10 +582,10 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			}
 		}
 	}
+
 	public void drawBlockDeposit(ArrayList<Block> blockList) {
 		drawBlockDeposit(blockList, getGraphics());
-	}//drawBlockDeposit
-	
+	}// drawBlockDeposit
 
 	@Override
 	public void run() {
@@ -532,7 +608,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 						this.fixingTetrisBlock();
 				}
 				this.repaint();
-	
+
 			}
 
 			countMove--;
@@ -703,7 +779,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			// block의 해당 line을 지운다.
 			if (count == maxX) {
 				removeLineCount++;
-				myScore+=100;
+				myScore += 100;
 				this.removeBlockLine(mainBlock.getY());
 				isCombo = true;
 			}
@@ -735,37 +811,37 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	private void removeBlockLine(int lineNumber) {
 		new Music("Clear.mp3", false).start();
 		// 1줄을 지워줌
-		for (int j = 0; j < maxX ; j++) {
+		for (int j = 0; j < maxX; j++) {
 			for (int s = 0; s < blockList.size(); s++) {
 				Block b = blockList.get(s);
 				if (b == map[lineNumber][j])
 					blockList.remove(s);
 			}
 			map[lineNumber][j] = null;
-		}// for(j)
+		} // for(j)
 
-		this.dropBoard(lineNumber,1);
+		this.dropBoard(lineNumber, 1);
 	}
 
 	/**
 	 * TODO : 게임종료콜벡 게임이 종료되면 실행되는 메소드
 	 */
 	public void gameEndCallBack() {
-		
-		//client.gameover();
+
+		// client.gameover();
 		this.isPlay = false;
-		if(GameMusic != null && GameMusic.isAlive()) {
+		if (GameMusic != null && GameMusic.isAlive()) {
 			GameMusic.close();
 		}
-		GameEndSound = new Music("GameOver.mp3", false); 
-		GameEndSound.start();	
+		GameEndSound = new Music("GameOver.mp3", false);
+		GameEndSound.start();
 		ImageIcon popupicon = new ImageIcon(TetrisMain.class.getResource("../../../Images/GAMEOVER.PNG"));
 		JOptionPane.showMessageDialog(null, null, "The End", JOptionPane.ERROR_MESSAGE, popupicon);
 	}
 
 	/**
 	 * 고스트블럭을 보여준다.
-	 */ 
+	 */
 	private void showGhost() {
 		ghost = getBlockClone(shap, true);
 		controllerGhost.setBlock(ghost);
@@ -870,20 +946,21 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	 * 블럭을 홀드시킨다.
 	 */
 	public void playBlockHold() {
-		if(isHold) return;
-		
-		if(hold==null){
+		if (isHold)
+			return;
+
+		if (hold == null) {
 			new Music("Save.mp3", false).start();
-			hold = getBlockClone(shap,false);
+			hold = getBlockClone(shap, false);
 			this.nextTetrisBlock();
-		}else{
+		} else {
 			new Music("Save.mp3", false).start();
-			TetrisBlock tmp = getBlockClone(shap,false);
-			shap = getBlockClone(hold,false);
-			hold = getBlockClone(tmp,false);
+			TetrisBlock tmp = getBlockClone(shap, false);
+			shap = getBlockClone(hold, false);
+			hold = getBlockClone(tmp, false);
 			this.initController();
 		}
-		
+
 		isHold = true;
 	}
 
@@ -931,57 +1008,57 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			this.notify();
 		}
 	}
-	
+
 	public void keyReleased(KeyEvent e) {
 	}
 
 	public void keyTyped(KeyEvent e) {
-	   }
+	}
 
-	   public void keyPressed(KeyEvent e) {
-	      Button button = new Button();
-	      if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-	         messageArea.requestFocus();
-	      }
-	      if (!isPlay)
-	         return;
-	      if (e.getKeyCode() == button.getLeft_key()) {
-	         if (usingEffect)
-	            new Music("Left.mp3", false).start(); // millions
-	         controller.moveLeft();
-	         controllerGhost.moveLeft();
-	      } else if (e.getKeyCode() == button.getRight_key()) {
-	         if (usingEffect)
-	            new Music("Right.mp3", false).start(); // millions
-	         controller.moveRight();
-	         controllerGhost.moveRight();
-	      } else if (e.getKeyCode() == button.getDown_key()) {
-	         if (usingEffect)
-	            new Music("Down.mp3", false).start();   // millions
-	         controller.moveDown();
-	      } else if (e.getKeyCode() == button.getUp_key()) {
-	         if (usingEffect)
-	            new Music("Rotation.mp3", false).start();   // millions
-	         controller.nextRotationLeft();
-	         controllerGhost.nextRotationLeft();
-	      } else if (e.getKeyCode() == button.getSpace_key()) {
-	         controller.moveQuickDown(shap.getPosY(), true);
-	         this.fixingTetrisBlock();
-	         
-	         if (usingEffect)
-	            new Music("Space.mp3", false).start();   // millions
-	         
-	      } else if (e.getKeyCode() == button.getShift_key()) {
-	         playBlockHold();
-	      }
+	public void keyPressed(KeyEvent e) {
+		Button button = new Button();
+		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+			messageArea.requestFocus();
+		}
+		if (!isPlay)
+			return;
+		if (e.getKeyCode() == button.getLeft_key()) {
+			if (usingEffect)
+				new Music("Left.mp3", false).start(); // millions
+			controller.moveLeft();
+			controllerGhost.moveLeft();
+		} else if (e.getKeyCode() == button.getRight_key()) {
+			if (usingEffect)
+				new Music("Right.mp3", false).start(); // millions
+			controller.moveRight();
+			controllerGhost.moveRight();
+		} else if (e.getKeyCode() == button.getDown_key()) {
+			if (usingEffect)
+				new Music("Down.mp3", false).start(); // millions
+			controller.moveDown();
+		} else if (e.getKeyCode() == button.getUp_key()) {
+			if (usingEffect)
+				new Music("Rotation.mp3", false).start(); // millions
+			controller.nextRotationLeft();
+			controllerGhost.nextRotationLeft();
+		} else if (e.getKeyCode() == button.getSpace_key()) {
+			controller.moveQuickDown(shap.getPosY(), true);
+			this.fixingTetrisBlock();
 
-	      if(this.client != null) {
-	      this.getClient().drawBlockShap(controller.getBlock());//HK
-	      this.getClient().drawBlockDeposit(blockList);//HK
-	      }
-	      this.showGhost();
-	      this.repaint();
-	   }
+			if (usingEffect)
+				new Music("Space.mp3", false).start(); // millions
+
+		} else if (e.getKeyCode() == button.getShift_key()) {
+			playBlockHold();
+		}
+
+		if (this.client != null) {
+			this.getClient().drawBlockShap(controller.getBlock());// HK
+			this.getClient().drawBlockDeposit(blockList);// HK
+		}
+		this.showGhost();
+		this.repaint();
+	}
 
 	public void mouseClicked(MouseEvent e) {
 	}
@@ -998,40 +1075,22 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 
 	public void mouseReleased(MouseEvent e) {
 	}
-	
+
 	// 게임 뮤직 키고 끄기 millions
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btnStart) {
-			
-			myScore = 0;
-			if(GameMusic != null && GameMusic.isAlive()) {
-				GameMusic.close();
-				if(usingBGM) {
-					GameMusic = new Music("GameMusic.mp3", true );
-					GameMusic.start();
-					
-					}
-			}else {
-				if(usingBGM) {
-					GameMusic = new Music("GameMusic.mp3", true );
-					GameMusic.start();
-					
-				}
+
+			if (client != null) {
+				client.gameStart((int) comboSpeed.getSelectedItem());
+			} else {
+				this.gameStart((int) comboSpeed.getSelectedItem());
 			}
-			//Sound.GameMusicStart();
-				
-			if(client!=null){
-				client.gameStart((int)comboSpeed.getSelectedItem());
-			}else{
-				this.gameStart((int)comboSpeed.getSelectedItem());
-			}
-		}else if(e.getSource() == btnExit){
-			
-			//Sound.GameExit();
-			if(GameMusic != null && GameMusic.isAlive()) {
+		} else if (e.getSource() == btnExit) {
+
+			if (GameMusic != null && GameMusic.isAlive()) {
 				GameMusic.close();
 			}
-			
+
 			if (client != null) {
 				if (tetris.isNetwork()) {
 					client.closeNetwork(tetris.isServer());
@@ -1040,11 +1099,54 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 				System.exit(0);
 			}
 
+		} else if (e.getSource() == btnSound1) {
+			SoundNumber = 1;
+			if (GameMusic.isAlive() && GameMusic != null) {
+				GameMusic.close();
+				GameMusic = new Music("GameMusic1.mp3", true);
+				GameMusic.start();
+			} else {
+				GameMusic.close();
+				GameMusic = new Music("GameMusic1.mp3", true);
+				GameMusic.start();
+			}
+		}
+				
+				
+		else if (e.getSource() == btnSound2) {
+			SoundNumber = 2;
+			if (GameMusic.isAlive() && GameMusic != null) {
+				GameMusic.close();
+				GameMusic = new Music("GameMusic2.mp3", true);
+				GameMusic.start();
+			} else {
+				GameMusic.close();
+				GameMusic = new Music("GameMusic2.mp3", true);
+				GameMusic.start();
+			}
+			
+		}
+		else if (e.getSource() == btnSound3) {
+			SoundNumber = 3;
+			if (GameMusic.isAlive() && GameMusic != null) {
+				GameMusic.close();
+				GameMusic = new Music("GameMusic3.mp3", true);
+				GameMusic.start();
+			} else {
+				GameMusic.close();
+				GameMusic = new Music("GameMusic3.mp3", true);
+				GameMusic.start();
+			}
 		}
 	}
 
-	public void setDeposit(ArrayList<Block> blockList2) {this.blockList2 = blockList2;}
-	public void setShap(TetrisBlock shap) {this.shap2 = shap;}
+	public void setDeposit(ArrayList<Block> blockList2) {
+		this.blockList2 = blockList2;
+	}
+
+	public void setShap(TetrisBlock shap) {
+		this.shap2 = shap;
+	}
 
 	public boolean isPlay() {
 		return isPlay;
@@ -1060,6 +1162,18 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 
 	public JButton getBtnExit() {
 		return btnExit;
+	}
+	
+	public JButton getBtnSound1() {
+		return btnSound1;
+	}
+	
+	public JButton getBtnSound2() {
+		return btnSound2;
+	}
+	
+	public JButton getBtnSound3() {
+		return btnSound3;
 	}
 
 	public void setClient(GameClient client) {

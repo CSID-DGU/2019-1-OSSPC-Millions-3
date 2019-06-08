@@ -17,9 +17,8 @@ import com.tetris.main.Music;
 import com.tetris.main.TetrisMain;
 import com.tetris.window.Sound;
 import com.tetris.window.Tetris;
-import static com.tetris.window.Sound.GameMusic;
-import static com.tetris.window.Sound.GameEndSound;
-import static com.tetris.window.TetrisBoard.usingBGM;
+import static com.tetris.window.TetrisBoard.GameMusic;
+import static com.tetris.window.TetrisBoard.GameEndSound;
 
 
 //---------------------[ 클라이언트 ]---------------------
@@ -113,8 +112,10 @@ public class GameClient implements Runnable{
 			}else if(data.getCommand() == DataShip.SET_INDEX){
 				reSetIndex(data.getIndex());
 			}else if(data.getCommand() == DataShip.GAME_OVER){
-				if(index == data.getIndex()) isPlay = data.isPlay();
-				reGameover(data.getMsg(), data.getTotalAdd());
+				if(index == data.getIndex()) {
+					isPlay = data.isPlay();
+					reGameover(data.getMsg(), data.getTotalAdd());
+				}
 			}else if(data.getCommand() == DataShip.PRINT_MESSAGE){
 				rePrintMessage(data.getMsg());
 			}else if(data.getCommand() == DataShip.PRINT_SYSTEM_MESSAGE){
@@ -130,8 +131,8 @@ public class GameClient implements Runnable{
 				}
 			}else if(data.getCommand() == DataShip.DRAW_BLOCK_DEPOSIT) {		//HK
 				if(data.getPlayer() != this.index) {
-				reDrawBlockDeposit(data.getDeposit());
-				tetris.getBoard().setDeposit(data.getDeposit());
+					reDrawBlockDeposit(data.getDeposit());
+					tetris.getBoard().setDeposit(data.getDeposit());
 				}
 			}
 			
@@ -195,8 +196,6 @@ public class GameClient implements Runnable{
 	//실행하기 : 연결끊기
 	public void reCloseNetwork(){
 
-		if(GameMusic != null && GameMusic.isAlive()) {
-			GameMusic.close();
 			
 			tetris.closeNetwork();
 			try {
@@ -207,18 +206,7 @@ public class GameClient implements Runnable{
 				e.printStackTrace();
 			}
 		}
-		else {
-		
-		tetris.closeNetwork();
-		try {
-			ois.close();
-			oos.close();
-			socket.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		}
-	}
+	
 	
 	//요청하기 : 게임시작
 	public void gameStart(int speed){
@@ -231,21 +219,6 @@ public class GameClient implements Runnable{
 		this.isPlay = isPlay;
 		tetris.gameStart(speed);
 		rePrintSystemMessage(msg);
-		//this.sound.GameMusicStart();
-		if(GameMusic != null && GameMusic.isAlive()) {
-			GameMusic.close();
-			if(usingBGM) {
-				GameMusic = new Music("GameMusic.mp3", true );
-				GameMusic.start();
-				
-				}
-		}else {
-			if(usingBGM) {
-				GameMusic = new Music("GameMusic.mp3", true );
-				GameMusic.start();
-				
-			}
-		}
 		
 	}
 	//요청하기 : 메시지
@@ -286,7 +259,6 @@ public class GameClient implements Runnable{
 		GameEndSound.start();	
 		ImageIcon popupicon = new ImageIcon(TetrisMain.class.getResource("../../../Images/GAMEOVER.PNG"));
 		JOptionPane.showMessageDialog(null, null, "The End", JOptionPane.ERROR_MESSAGE, popupicon);
-		//sound.GameOver();
 	}
 	public void reGameover(String msg, int totalAdd){
 		tetris.printSystemMessage(msg);

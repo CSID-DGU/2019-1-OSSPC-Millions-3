@@ -1,5 +1,7 @@
 package com.tetris.window;
 
+import static com.tetris.window.Sound.GameMusic;
+
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -140,12 +142,22 @@ public class Tetris extends JFrame implements ActionListener{
 	}
 
 	public void closeNetwork(){
+		if(GameMusic != null && GameMusic.isAlive()) {
+			GameMusic.close();
 		isNetwork = false;
 		client = null;
 		itemServerStart.setEnabled(true);
 		itemClientStart.setEnabled(true);
 		board.setPlay(false);
 		board.setClient(null);
+		}else {
+			isNetwork = false;
+			client = null;
+			itemServerStart.setEnabled(true);
+			itemClientStart.setEnabled(true);
+			board.setPlay(false);
+			board.setClient(null);
+		}
 	}
 
 	public JMenuItem getItemServerStart() {return itemServerStart;}
