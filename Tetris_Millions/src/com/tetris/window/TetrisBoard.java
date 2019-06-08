@@ -230,41 +230,44 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 				if (checkBGM.isSelected() == true) {
 
 					usingBGM = true;
-					if (GameMusic.isAlive() && GameMusic != null) {
-						GameMusic.close();
-						if (SoundNumber == 1) {
-							GameMusic = new Music("GameMusic1.mp3", true);
-							GameMusic.start();
-						} else if (SoundNumber == 2) {
-							GameMusic = new Music("GameMusic2.mp3", true);
-							GameMusic.start();
-						} else if (SoundNumber == 3) {
-							GameMusic = new Music("GameMusic3.mp3", true);
-							GameMusic.start();
-						} 
-					} else {
-						if (SoundNumber == 1) {
-							GameMusic = new Music("GameMusic1.mp3", true);
-							GameMusic.start();
-						} else if (SoundNumber == 2) {
-							GameMusic = new Music("GameMusic2.mp3", true);
-							GameMusic.start();
-						} else if (SoundNumber == 3) {
-							GameMusic = new Music("GameMusic3.mp3", true);
-							GameMusic.start();
-						} 
+					if (isPlay == true) {
+						if (GameMusic.isAlive() && GameMusic != null) {
+							GameMusic.close();
+							if (SoundNumber == 1) {
+								GameMusic = new Music("GameMusic1.mp3", true);
+								GameMusic.start();
+							} else if (SoundNumber == 2) {
+								GameMusic = new Music("GameMusic2.mp3", true);
+								GameMusic.start();
+							} else if (SoundNumber == 3) {
+								GameMusic = new Music("GameMusic3.mp3", true);
+								GameMusic.start();
+							}
+						} else {
+							if (SoundNumber == 1) {
+								GameMusic = new Music("GameMusic1.mp3", true);
+								GameMusic.start();
+							} else if (SoundNumber == 2) {
+								GameMusic = new Music("GameMusic2.mp3", true);
+								GameMusic.start();
+							} else if (SoundNumber == 3) {
+								GameMusic = new Music("GameMusic3.mp3", true);
+								GameMusic.start();
+							}
+						}
 					}
 				} else {
-					usingBGM = false;
 					if (GameMusic != null && GameMusic.isAlive()) {
 						GameMusic.close();
-					}
 
+					}
 				}
+
 				TetrisBoard.this.setRequestFocusEnabled(true);
 				TetrisBoard.this.repaint();
 			}
-		});
+			});
+	
 
 		comboSpeed.setBounds(PANEL_WIDTH - BLOCK_SIZE * 13, 5, 45, 20); // 속도 숫자 표시 왼쪽으로 이동.(millions)
 		this.add(comboSpeed);
@@ -303,7 +306,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		if (th != null) {
 			try {
 				isPlay = false;
-				;
+
 				th.join();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -1101,41 +1104,42 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 
 		} else if (e.getSource() == btnSound1) {
 			SoundNumber = 1;
-			if (GameMusic.isAlive() && GameMusic != null) {
-				GameMusic.close();
-				GameMusic = new Music("GameMusic1.mp3", true);
-				GameMusic.start();
-			} else {
-				GameMusic.close();
-				GameMusic = new Music("GameMusic1.mp3", true);
-				GameMusic.start();
+			if (isPlay == true) {
+				if (GameMusic.isAlive() && GameMusic != null) {
+					GameMusic.close();
+					GameMusic = new Music("GameMusic1.mp3", true);
+					GameMusic.start();
+				} else {
+					GameMusic = new Music("GameMusic1.mp3", true);
+					GameMusic.start();
+				}
 			}
 		}
-				
-				
+
 		else if (e.getSource() == btnSound2) {
 			SoundNumber = 2;
-			if (GameMusic.isAlive() && GameMusic != null) {
-				GameMusic.close();
-				GameMusic = new Music("GameMusic2.mp3", true);
-				GameMusic.start();
-			} else {
-				GameMusic.close();
-				GameMusic = new Music("GameMusic2.mp3", true);
-				GameMusic.start();
+			if (isPlay == true) {
+				if (GameMusic.isAlive() && GameMusic != null) {
+					GameMusic.close();
+					GameMusic = new Music("GameMusic2.mp3", true);
+					GameMusic.start();
+				} else {
+					GameMusic = new Music("GameMusic2.mp3", true);
+					GameMusic.start();
+				}
 			}
-			
-		}
-		else if (e.getSource() == btnSound3) {
+
+		} else if (e.getSource() == btnSound3) {
 			SoundNumber = 3;
-			if (GameMusic.isAlive() && GameMusic != null) {
-				GameMusic.close();
-				GameMusic = new Music("GameMusic3.mp3", true);
-				GameMusic.start();
-			} else {
-				GameMusic.close();
-				GameMusic = new Music("GameMusic3.mp3", true);
-				GameMusic.start();
+			if (isPlay == true) {
+				if (GameMusic.isAlive() && GameMusic != null) {
+					GameMusic.close();
+					GameMusic = new Music("GameMusic3.mp3", true);
+					GameMusic.start();
+				} else {
+					GameMusic = new Music("GameMusic3.mp3", true);
+					GameMusic.start();
+				}
 			}
 		}
 	}
@@ -1163,15 +1167,15 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	public JButton getBtnExit() {
 		return btnExit;
 	}
-	
+
 	public JButton getBtnSound1() {
 		return btnSound1;
 	}
-	
+
 	public JButton getBtnSound2() {
 		return btnSound2;
 	}
-	
+
 	public JButton getBtnSound3() {
 		return btnSound3;
 	}
