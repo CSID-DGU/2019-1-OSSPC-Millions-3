@@ -95,8 +95,9 @@ class GameHandler extends Thread{
 					drawBlockShap(data.getShap(), data.getPlayer());
 			}else if(data.getCommand() == DataShip.DRAW_BLOCK_DEPOSIT) {		//HK
 					drawBlockDeposit(data.getDeposit(), data.getPlayer());
+			}else if(data.getCommand() == DataShip.ENEMY_SCORE) {		//millions
+					drawEnemyScore(data.getEnemyScore(), data.getPlayer());
 			}
-			
 		}//while(true)
 		
 		try {
@@ -107,6 +108,7 @@ class GameHandler extends Thread{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 		
 	}//run
 	
@@ -134,6 +136,20 @@ class GameHandler extends Thread{
 			synchronized(DataShip.class) {
 			DataShip data = new DataShip(DataShip.DRAW_BLOCK_DEPOSIT);
 			data.setDeposit(blockList2);
+			data.setPlayer(player);
+			broadcast(data);
+			}
+		} 
+		//drawEnemyScore , millions
+		public void drawEnemyScore(int EnemyScore) {
+			DataShip data = new DataShip(DataShip.ENEMY_SCORE);
+			data.setEnemyScore(EnemyScore);
+			broadcast(data);
+		}
+		public void drawEnemyScore(int EnemyScore, int player) {
+			synchronized(DataShip.class) {
+			DataShip data = new DataShip(DataShip.ENEMY_SCORE);
+			data.setEnemyScore(EnemyScore);
 			data.setPlayer(player);
 			broadcast(data);
 			}

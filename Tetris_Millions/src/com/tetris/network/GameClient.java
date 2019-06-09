@@ -134,6 +134,11 @@ public class GameClient implements Runnable{
 					reDrawBlockDeposit(data.getDeposit());
 					tetris.getBoard().setDeposit(data.getDeposit());
 				}
+			} else if(data.getCommand() == DataShip.ENEMY_SCORE) {		//millions 상대방 점수표시
+				if(data.getEnemyScore() != this.index) {
+					reDrawEnemyScore(data.getEnemyScore());
+					tetris.getBoard().setEnemyScore(data.getEnemyScore());
+				}
 			}
 			
 		}//while(true)
@@ -184,6 +189,21 @@ public class GameClient implements Runnable{
 			tetris.getBoard().drawBlockDeposit(blockList2);
 		}//drawBlockDeposit HK
 		
+		public void drawEnemyScore(int EnemyScore) {
+			DataShip data = new DataShip(DataShip.ENEMY_SCORE);
+			data.setEnemyScore(EnemyScore);
+			data.setPlayer(index);
+			send(data);
+			try{
+				oos.reset(); //블록의 좌표를 업데이트한다.
+			}catch(IOException e){
+				e.printStackTrace();
+			}
+		}
+		
+		public void reDrawEnemyScore(int EnemyScore) {
+			tetris.getBoard().drawEnemyScore(EnemyScore);
+		}//drawEnemyScore , millions
 	
 	
 	

@@ -54,7 +54,15 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	public static final int BLOCK_SIZE = 20;
 	public static final int BOARD_X = 120;
 	public static final int BOARD_Y = 50;
-	private static int minX = 1, minY = 0, maxX = 10, maxY = 21, down = 50, up = 0;
+	private static int minX = 1, minY = 0;
+
+	private static int maxX = 10;
+
+	private static int maxY = 21;
+
+	private static int down = 50;
+
+	private static int up = 0;
 	private static final int MESSAGE_WIDTH = BLOCK_SIZE * 7;
 	private static final int MESSAGE_HEIGHT = BLOCK_SIZE * 6;
 	public static final int PANEL_WIDTH = 2 * (maxX * BLOCK_SIZE + MESSAGE_WIDTH + BOARD_X);
@@ -93,6 +101,8 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 
 	private TetrisBlock shap2;// HK
 	private ArrayList<Block> blockList2;// HK
+	private int EnemyScore;
+	private int myScore = 0;
 
 	private boolean isPlay = false;
 	private boolean isHold = false;
@@ -108,7 +118,8 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	public ImageIcon icon1;
 	public ImageIcon icon2;
 
-	public int myScore = 0;
+
+	
 
 	Graphics buff; // 더블버퍼링을 위한 버퍼
 
@@ -343,7 +354,9 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			}
 		}
 
+		//게임 점수 초기화
 		myScore = 0;
+		EnemyScore = 0;
 
 		// 맵셋팅
 		map = new Block[maxY][maxX];
@@ -413,11 +426,17 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 				BOARD_Y + BLOCK_SIZE + BLOCK_SIZE * 5 + 20);
 		g.setFont(font);
 
-		// score 출력
+		// Myscore 출력
 		g.setColor(Color.black);
 		g.setFont(new Font(font.getFontName(), font.getStyle(), 20));
 		g.drawString("MY SCORE", BOARD_X + BLOCK_SIZE + (maxX + 1) * BLOCK_SIZE + 1 + 120, BOARD_Y + 50);
 		g.drawString(" " + myScore, BOARD_X + BLOCK_SIZE + (maxX + 1) * BLOCK_SIZE + 1 + 170, BOARD_Y + 80);
+		
+		// Enemyscore 출력
+		g.setColor(Color.black);
+		g.setFont(new Font(font.getFontName(), font.getStyle(), 20));
+		g.drawString("ENEMY", BOARD_X + BLOCK_SIZE + (maxX + 1) * BLOCK_SIZE + 1 + 120, BOARD_Y + 110);
+		//g.drawString(" " + EnemyScore, BOARD_X + BLOCK_SIZE + (maxX + 1) * BLOCK_SIZE + 1 + 170, BOARD_Y + 140);
 
 		// 그리드 표시
 		if (usingGrid) {
@@ -545,6 +564,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		try {
 			drawBlockShap(shap2, g);
 			drawBlockDeposit(blockList2, g);
+			drawEnemyScore(EnemyScore, g);
 		} catch (NullPointerException e) {
 			e.printStackTrace();
 		} // repaint_drawBlock
@@ -589,6 +609,20 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	public void drawBlockDeposit(ArrayList<Block> blockList) {
 		drawBlockDeposit(blockList, getGraphics());
 	}// drawBlockDeposit
+	
+	
+	//상대 점수 그리기 millions
+	
+	public void drawEnemyScore(int EnemyScore, Graphics g) {
+		
+		g.drawString(" " + EnemyScore, BOARD_X + BLOCK_SIZE + (maxX + 1) * BLOCK_SIZE + 1 + 170, BOARD_Y + 140);
+	
+		}
+	
+	public void drawEnemyScore(int EnemyScore) {
+		drawEnemyScore(EnemyScore, getGraphics());
+		
+	}
 
 	@Override
 	public void run() {
@@ -783,6 +817,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			if (count == maxX) {
 				removeLineCount++;
 				myScore += 100;
+				EnemyScore += 100;
 				this.removeBlockLine(mainBlock.getY());
 				isCombo = true;
 			}
@@ -1104,7 +1139,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 
 		} else if (e.getSource() == btnSound1) {
 			SoundNumber = 1;
-			if (isPlay == true) {
+			if (isPlay == true  && checkBGM.isSelected() == true) {
 				if (GameMusic.isAlive() && GameMusic != null) {
 					GameMusic.close();
 					GameMusic = new Music("GameMusic1.mp3", true);
@@ -1116,9 +1151,9 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			}
 		}
 
-		else if (e.getSource() == btnSound2) {
+		else if (e.getSource() == btnSound2 ) {
 			SoundNumber = 2;
-			if (isPlay == true) {
+			if (isPlay == true  && checkBGM.isSelected() == true) {
 				if (GameMusic.isAlive() && GameMusic != null) {
 					GameMusic.close();
 					GameMusic = new Music("GameMusic2.mp3", true);
@@ -1131,7 +1166,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 
 		} else if (e.getSource() == btnSound3) {
 			SoundNumber = 3;
-			if (isPlay == true) {
+			if (isPlay == true  && checkBGM.isSelected() == true) {
 				if (GameMusic.isAlive() && GameMusic != null) {
 					GameMusic.close();
 					GameMusic = new Music("GameMusic3.mp3", true);
@@ -1150,6 +1185,10 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 
 	public void setShap(TetrisBlock shap) {
 		this.shap2 = shap;
+	}
+	
+	public void setEnemyScore(int EnemyScore) {
+		this.EnemyScore = EnemyScore;
 	}
 
 	public boolean isPlay() {
