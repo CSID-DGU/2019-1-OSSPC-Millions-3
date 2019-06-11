@@ -61,7 +61,7 @@ public class Button {
     // Frame
     frame = new JFrame("키 설정");
      frame.setPreferredSize(new Dimension(350, 250));
-     frame.setLocation(785, 400);
+     frame.setLocation(350, 250);
      frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE); // 문제가 생기 시 DISPOSE_ON_CLOSE로 해볼 것.
      frame.pack();
      frame.setVisible(true);
@@ -139,7 +139,7 @@ public class Button {
    
        // 프레임 생성
        keyFrame.setPreferredSize(new Dimension(400, 150));
-       keyFrame.setLocation(760, 450);
+       keyFrame.setLocation(700, 250);
        keyFrame.pack();
       
        // 텍스트필드 생성
