@@ -56,7 +56,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	public static final int BOARD_Y = 50;
 	private static int minX = 1, minY = 0;
 
-	private static int maxX = 10;
+	public static int maxX = 10;
 
 	private static int maxY = 21;
 
@@ -433,9 +433,9 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		g.drawString(" " + myScore, BOARD_X + BLOCK_SIZE + (maxX + 1) * BLOCK_SIZE + 1 + 170, BOARD_Y + 80);
 		
 		// Enemyscore 출력
-		g.setColor(Color.black);
-		g.setFont(new Font(font.getFontName(), font.getStyle(), 20));
-		g.drawString("ENEMY", BOARD_X + BLOCK_SIZE + (maxX + 1) * BLOCK_SIZE + 1 + 120, BOARD_Y + 110);
+//		g.setColor(Color.black);
+//		g.setFont(new Font(font.getFontName(), font.getStyle(), 20));
+//		g.drawString("ENEMY", BOARD_X + BLOCK_SIZE + (maxX + 1) * BLOCK_SIZE + 1 + 120, BOARD_Y + 110);
 		//g.drawString(" " + EnemyScore, BOARD_X + BLOCK_SIZE + (maxX + 1) * BLOCK_SIZE + 1 + 170, BOARD_Y + 140);
 
 		// 그리드 표시
@@ -611,11 +611,9 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	}// drawBlockDeposit
 	
 	
-	//상대 점수 그리기 millions
+	//상대 점수 그리기 millions 미완성
 	
 	public void drawEnemyScore(int EnemyScore, Graphics g) {
-		
-		g.drawString(" " + EnemyScore, BOARD_X + BLOCK_SIZE + (maxX + 1) * BLOCK_SIZE + 1 + 170, BOARD_Y + 140);
 	
 		}
 	
@@ -798,12 +796,32 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 
 			if (mainBlock.getY() < maxY && mainBlock.getX() < maxX)
 				map[mainBlock.getY()][mainBlock.getX()] = mainBlock;
-
-			// 줄이 꽉 찼을 경우. 게임을 종료한다.
-			if (mainBlock.getY() == 1 && mainBlock.getX() > 2 && mainBlock.getX() < 7) {
+			
+			if (mainBlock.getY() == 13) {
+	
+				if (GameMusic.isAlive() && GameMusic != null) {
+					GameMusic.close();
+					GameMusic = new Music("GameMusic2.mp3", true);
+					GameMusic.start();
+				} else {
+					GameMusic = new Music("GameMusic2.mp3", true);
+					GameMusic.start();
+				}
+			}else if (mainBlock.getY()  == 4 ) {
+				if (GameMusic.isAlive() && GameMusic != null) {
+					GameMusic.close();
+					GameMusic = new Music("GameMusic3.mp3", true);
+					GameMusic.start();
+				} else {
+					GameMusic = new Music("GameMusic3.mp3", true);
+					GameMusic.start();
+				}
+			}else if (mainBlock.getY() == 1 && mainBlock.getX() > 2 && mainBlock.getX() < 7) {
 				this.gameEndCallBack();
-				break;
+				break; //줄이 꽉 찼을 경우에 게임을 종료한다. 
 			}
+			
+			
 
 			// 1줄개수 체크
 			count = 0;
