@@ -797,26 +797,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			if (mainBlock.getY() < maxY && mainBlock.getX() < maxX)
 				map[mainBlock.getY()][mainBlock.getX()] = mainBlock;
 			
-			if (mainBlock.getY() == 13) {  // 블록이 8줄 쌓였였을 경우
-	
-				if (GameMusic.isAlive() && GameMusic != null) {
-					GameMusic.close();
-					GameMusic = new Music("GameMusic2.mp3", true);
-					GameMusic.start();
-				} else {
-					GameMusic = new Music("GameMusic2.mp3", true);
-					GameMusic.start();
-				}
-			}else if (mainBlock.getY()  == 6 ) {  // 블록이 15줄 쌓였을 경우
-				if (GameMusic.isAlive() && GameMusic != null) {
-					GameMusic.close();
-					GameMusic = new Music("GameMusic3.mp3", true);
-					GameMusic.start();
-				} else {
-					GameMusic = new Music("GameMusic3.mp3", true);
-					GameMusic.start();
-				}
-			}else if (mainBlock.getY() == 1 && mainBlock.getX() > 2 && mainBlock.getX() < 7) {
+			if (mainBlock.getY() == 1 && mainBlock.getX() > 2 && mainBlock.getX() < 7) {
 				this.gameEndCallBack();
 				break; //줄이 꽉 찼을 경우에 게임을 종료한다. 
 			}
