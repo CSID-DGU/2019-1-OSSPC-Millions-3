@@ -118,9 +118,6 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	public ImageIcon icon1;
 	public ImageIcon icon2;
 
-
-	
-
 	Graphics buff; // 더블버퍼링을 위한 버퍼
 
 	public static Music GameMusic;
@@ -431,6 +428,19 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		g.setFont(new Font(font.getFontName(), font.getStyle(), 20));
 		g.drawString("MY SCORE", BOARD_X + BLOCK_SIZE + (maxX + 1) * BLOCK_SIZE + 1 + 120, BOARD_Y + 50);
 		g.drawString(" " + myScore, BOARD_X + BLOCK_SIZE + (maxX + 1) * BLOCK_SIZE + 1 + 170, BOARD_Y + 80);
+		
+		// now bgm 출력
+		g.setColor(Color.black);
+		g.setFont(new Font(font.getFontName(), font.getStyle(), 15));
+		g.drawString("Now : ", BOARD_X + BLOCK_SIZE + (maxX + 1) * BLOCK_SIZE + 1 + 460, BOARD_Y + 80);
+		if(SoundNumber ==1) {
+			g.drawString("BGM1", BOARD_X + BLOCK_SIZE + (maxX + 1) * BLOCK_SIZE + 1 + 500, BOARD_Y + 80);
+		} else if(SoundNumber ==2) {
+			g.drawString("BGM2", BOARD_X + BLOCK_SIZE + (maxX + 1) * BLOCK_SIZE + 1 + 500, BOARD_Y + 80);
+		} else if(SoundNumber ==3) {
+			g.drawString("BGM3", BOARD_X + BLOCK_SIZE + (maxX + 1) * BLOCK_SIZE + 1 + 500, BOARD_Y + 80);
+		} 
+		
 		
 		// Enemyscore 출력
 //		g.setColor(Color.black);
