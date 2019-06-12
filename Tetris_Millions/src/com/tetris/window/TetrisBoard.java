@@ -123,6 +123,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	public static Music GameMusic;
 	public static Music GameEndSound;
 	public int SoundNumber = 1; // 음악 구부늘 위한 번호
+	public int FixedSound= 0;
 
 	public TetrisBoard(Tetris tetris, GameClient client) {
 		this.tetris = tetris;
@@ -320,6 +321,11 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 				e.printStackTrace();
 			}
 		}
+		//게임 초기 음악 1번으로 설정
+		SoundNumber = 1;
+		//음악 선택 초기화
+		FixedSound = 0; 
+		
 		if (GameMusic != null && GameMusic.isAlive()) {
 			GameMusic.close();
 			if (usingBGM) {
@@ -811,7 +817,28 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 				this.gameEndCallBack();
 				break; //줄이 꽉 찼을 경우에 게임을 종료한다. 
 			}
-			
+			// 블록이 차오를 경우 음악 전환
+			else if (mainBlock.getY() == 13 && checkBGM.isSelected() == true && SoundNumber == 1 && FixedSound == 0) { 
+				SoundNumber = 2;  
+				if (GameMusic.isAlive() && GameMusic != null) {
+		               GameMusic.close();
+		               GameMusic = new Music("GameMusic2.mp3", true);
+		               GameMusic.start();
+		            } else {
+		               GameMusic = new Music("GameMusic2.mp3", true);
+		               GameMusic.start();
+		            } // 블록 8줄 쌓였을 경우 && 체크박스 활성화 && 1번 사운드 재생 && 음악선택 버튼 안눌러야함
+			}else if (mainBlock.getY() == 6 && checkBGM.isSelected() == true && SoundNumber == 2 && FixedSound == 0) { 
+				SoundNumber = 3;  
+				if (GameMusic.isAlive() && GameMusic != null) {
+		               GameMusic.close();
+		               GameMusic = new Music("GameMusic3.mp3", true);
+		               GameMusic.start();
+		            } else {
+		               GameMusic = new Music("GameMusic3.mp3", true);
+		               GameMusic.start();
+		            } // 블록 15줄 쌓였을 경우 && 체크박스 활성화 && 2번 사운드 재생 && 음악선택 버튼 안눌러야함
+			}
 			
 
 			// 1줄개수 체크
@@ -825,7 +852,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			// block의 해당 line을 지운다.
 			if (count == maxX) {
 				removeLineCount++;
-				myScore += 100;
+				//myScore += 100;
 				EnemyScore += 100;
 				this.removeBlockLine(mainBlock.getY());
 				isCombo = true;
@@ -1147,6 +1174,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			}
 
 		} else if (e.getSource() == btnSound1) {
+			FixedSound = 1;
 			SoundNumber = 1;
 			if (isPlay == true  && checkBGM.isSelected() == true) {
 				if (GameMusic.isAlive() && GameMusic != null) {
@@ -1161,6 +1189,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		}
 
 		else if (e.getSource() == btnSound2 ) {
+			FixedSound = 1;
 			SoundNumber = 2;
 			if (isPlay == true  && checkBGM.isSelected() == true) {
 				if (GameMusic.isAlive() && GameMusic != null) {
@@ -1174,6 +1203,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 			}
 
 		} else if (e.getSource() == btnSound3) {
+			FixedSound = 1;
 			SoundNumber = 3;
 			if (isPlay == true  && checkBGM.isSelected() == true) {
 				if (GameMusic.isAlive() && GameMusic != null) {
