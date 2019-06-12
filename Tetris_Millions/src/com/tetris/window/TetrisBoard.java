@@ -124,6 +124,8 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	public static Music GameEndSound;
 	public int SoundNumber = 1; // 음악 구부늘 위한 번호
 	public int FixedSound= 0;
+	
+	private int pk=0;
 
 	public TetrisBoard(Tetris tetris, GameClient client) {
 		this.tetris = tetris;
@@ -778,6 +780,17 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 
 		// check
 		isCombo = checkMap();
+		
+		if(pk == 2) {
+			myScore += 100;
+		} else if (pk == 3) {
+			myScore += 200;
+		} else if(pk == 4) {
+			myScore += 400;
+		} else if(pk >= 5) {
+			myScore += 500;
+		}
+		pk = 0;
 
 		if (isCombo)
 			removeLineCombo++;
@@ -856,6 +869,8 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 				EnemyScore += 100;
 				this.removeBlockLine(mainBlock.getY());
 				isCombo = true;
+				
+				pk += 1;
 			}
 		}
 		return isCombo;
