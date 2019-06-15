@@ -27,6 +27,12 @@ You need to use JRE system library [JavaSE-1.8] and Jave MP3 library [JLayer 1.0
 
 https://github.com/CSID-DGU/2017-2-OSSP-jalhaebojo-2
 
+## Mp3 Source directory
+
+https://soundeffect-lab.info/
+https://www.youtube.com/audiolibrary/music
+
+
 ## What improved?
 
 1. Background music and sound effect.
@@ -34,6 +40,7 @@ https://github.com/CSID-DGU/2017-2-OSSP-jalhaebojo-2
 That function did not exist in existing programs.
 The sound effects was recorded in the voices of the developers.
 This music can be turned on/off through checkbox, and the background music can be played by selecting one of three.
+Also, The music changes according to the block height.
 
 2. Key Settings
 
@@ -57,4 +64,5 @@ We changed the cold, dark background to simple and bright.
 
 7. My score
 
-Unlike previous programs that didn't show their own scores when playing, we produce window that shows the scores they accumulate whenever they reduce blocks.
+Unlike previous programs that didn't show their own scores when playing, we produce window that shows the scores they accumulate whenever they reduce blocks. 
+Furthermore, if you delete multiple lines at once, you get additional points.
