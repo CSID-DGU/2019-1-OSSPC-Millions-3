@@ -2,11 +2,11 @@
 
 ## Developers
 
-2015110871 김주영
+2015110871 김주영(Kim juyeong)
 
-2015110433 배정수
+2015110433 배정수(Bae jungsoo)
 
-2016110453 길효진
+2016110453 길효진(Gil hyojin)
 
 
 ## Descriptions
@@ -32,6 +32,13 @@ https://github.com/CSID-DGU/2017-2-OSSP-jalhaebojo-2
 https://soundeffect-lab.info/
 https://www.youtube.com/audiolibrary/music
 
+## Develope environment and IDE
+
+OS
+ - Windows 10, Ubuntu (Linux)
+
+IDE
+ - eclipse
 
 ## What improved?
 
