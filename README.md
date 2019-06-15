@@ -1,6 +1,6 @@
 # 2019-1-OSSPC-Millions-3
 
-## Developers
+## 1. Developers
 
 2015110871 김주영(Kim juyeong)
 
@@ -9,7 +9,7 @@
 2016110453 길효진(Gil hyojin)
 
 
-## Descriptions
+## 2. Descriptions
 
 This project is used for educational purpose only.
 
@@ -18,23 +18,23 @@ This program is a result of project that has supplemented existing opensource pr
 You need to use JRE system library [JavaSE-1.8] and Jave MP3 library [JLayer 1.0.1] for executing this project.
 
 
-## License
+## 3. License
 
 [The MIT License](https://opensource.org/licenses/MIT) 
 
 
-## Original Opensource
+## 4. Original Opensource
 
 https://github.com/CSID-DGU/2017-2-OSSP-jalhaebojo-2
 
-## Mp3 Source
+## 5. Mp3 Source
 
 https://soundeffect-lab.info/
 https://www.youtube.com/audiolibrary/music
 
 Our attractive Voice
 
-## Develope environment and IDE
+## 6. Develope environment and IDE
 
 OS
  - Windows 10, Ubuntu (Linux)
@@ -42,7 +42,7 @@ OS
 IDE
  - eclipse
 
-## What improved?
+## 7. What improved?
 
 1. Background music and sound effect.
 
@@ -77,9 +77,10 @@ Unlike previous programs that didn't show their own scores when playing, we prod
 Furthermore, if you delete multiple lines at once, you get additional points.
 
 
-## Result Image 
+## 8. Final Result Image 
 
 1. Main Game Image(CheckBox, BGM Button, Score , Counterpart Player's block, ect.)
+
 ![2  최종결과물소개_메인 배경 변경, 체크박스, 점수 표시, BGM선택 ](https://user-images.githubusercontent.com/48506699/59550525-904fc200-8fa6-11e9-8d1c-6c6fc705d6c0.PNG)
 
 2. Openning Image
@@ -92,9 +93,9 @@ Furthermore, if you delete multiple lines at once, you get additional points.
 ![2  최종결과물소개_게임 오버 종료 이미지](https://user-images.githubusercontent.com/48506699/59550536-aa89a000-8fa6-11e9-96af-11379be1b376.PNG)
 
 
-3. Key Setting Image
+4. Key Setting Image
 
 ![2  최종결과물소개_키 설정 기능](https://user-images.githubusercontent.com/48506699/59550546-cf7e1300-8fa6-11e9-80b3-2e0b44f09cba.PNG)
 
 
-## Demo Video
+## 9. Demo Video
