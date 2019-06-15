@@ -27,10 +27,12 @@ You need to use JRE system library [JavaSE-1.8] and Jave MP3 library [JLayer 1.0
 
 https://github.com/CSID-DGU/2017-2-OSSP-jalhaebojo-2
 
-## Mp3 Source directory
+## Mp3 Source
 
 https://soundeffect-lab.info/
 https://www.youtube.com/audiolibrary/music
+
+Our attractive Voice
 
 ## Develope environment and IDE
 
@@ -73,3 +75,26 @@ We changed the cold, dark background to simple and bright.
 
 Unlike previous programs that didn't show their own scores when playing, we produce window that shows the scores they accumulate whenever they reduce blocks. 
 Furthermore, if you delete multiple lines at once, you get additional points.
+
+
+## Result Image 
+
+1. Main Game Image(CheckBox, BGM Button, Score , Counterpart Player's block, ect.)
+![2  최종결과물소개_메인 배경 변경, 체크박스, 점수 표시, BGM선택 ](https://user-images.githubusercontent.com/48506699/59550525-904fc200-8fa6-11e9-8d1c-6c6fc705d6c0.PNG)
+
+2. Openning Image
+
+![2  최종결과물소개_시작 화면 추가](https://user-images.githubusercontent.com/48506699/59550543-bd9c7000-8fa6-11e9-8f9b-c3ab81f60db4.PNG)
+
+
+3. Game End Image
+
+![2  최종결과물소개_게임 오버 종료 이미지](https://user-images.githubusercontent.com/48506699/59550536-aa89a000-8fa6-11e9-96af-11379be1b376.PNG)
+
+
+3. Key Setting Image
+
+![2  최종결과물소개_키 설정 기능](https://user-images.githubusercontent.com/48506699/59550546-cf7e1300-8fa6-11e9-80b3-2e0b44f09cba.PNG)
+
+
+## Demo Video
