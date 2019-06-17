@@ -330,7 +330,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 		
 		if (GameMusic != null && GameMusic.isAlive()) {
 			GameMusic.close();
-			if (usingBGM) {
+			if (checkBGM.isSelected()) {
 				if (SoundNumber == 1) {
 					GameMusic = new Music("GameMusic1.mp3", true);
 					GameMusic.start();
@@ -344,7 +344,7 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 
 			}
 		} else {
-			if (usingBGM) {
+			if (checkBGM.isSelected()) {
 				if (SoundNumber == 1) {
 					GameMusic = new Music("GameMusic1.mp3", true);
 					GameMusic.start();
