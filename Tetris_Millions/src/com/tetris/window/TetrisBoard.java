@@ -898,7 +898,9 @@ public class TetrisBoard extends JPanel implements Runnable, KeyListener, MouseL
 	 * @param lineNumber 삭제라인
 	 */
 	private void removeBlockLine(int lineNumber) {
-		new Music("Clear.mp3", false).start();
+		if(checkEffect.isSelected() == true) {
+			new Music("Clear.mp3", false).start();
+		}
 		// 1줄을 지워줌
 		for (int j = 0; j < maxX; j++) {
 			for (int s = 0; s < blockList.size(); s++) {
